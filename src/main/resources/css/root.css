@@ -1,0 +1,15 @@
+
+/**************************************************
+ * Root
+**************************************************/
+
+.rootPane {
+    -fx-background-color: black;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.root {
+    -fx-font-family: "Comic Sans MS";
+}
+

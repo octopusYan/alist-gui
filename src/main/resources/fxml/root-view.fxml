@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+<VBox fx:id="rootPane" styleClass="rootPane" alignment="TOP_CENTER" prefHeight="620.0" prefWidth="700.0" spacing="10.0"
+      stylesheets="@../css/root-view.css" xmlns="http://javafx.com/javafx/11.0.14-internal"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.octopusyan.alistgui.controller.MainController">
+
+
+    <HBox fx:id="windowHeader" alignment="CENTER_RIGHT" prefWidth="Infinity" spacing="10.0">
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </padding>
+        <Button fx:id="alwaysOnTopIcon" styleClass="iconButton"/>
+        <Button fx:id="minimizeIcon" styleClass="iconButton"/>
+        <Button fx:id="closeIcon" styleClass="iconButton"/>
+    </HBox>
+
+    <TabPane fx:id="tabPane" prefWidth="Infinity" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+        <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0"/>
+        </padding>
+        <Tab text="主页">
+            <graphic>
+                <FontIcon iconLiteral="cil-library" iconColor="white"/>
+            </graphic>
+            <VBox>
+                <padding>
+                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                </padding>
+                <HBox styleClass="mainViewHeader" prefWidth="Infinity" alignment="TOP_CENTER">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <Label fx:id="homeLabel" text="AList GUI" alignment="CENTER"/>
+                    <Label fx:id="statusLabel" text="运行中" alignment="TOP_CENTER">
+                        <HBox.margin>
+                            <Insets left="-10.0" top="-5"/>
+                        </HBox.margin>
+                    </Label>
+                </HBox>
+                <HBox prefWidth="Infinity" alignment="TOP_CENTER" spacing="25.0">
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                    <Button fx:id="startButton" styleClass="controlMenu" text="开始"/>
+                    <Button fx:id="passwordButton" styleClass="controlMenu" text="密码"/>
+                    <Button fx:id="restartButton" styleClass="controlMenu" text="重启"/>
+                    <Button fx:id="moreButton" styleClass="controlMenu" text="更多"/>
+                </HBox>
+                <TextArea fx:id="logArea" editable="false" wrapText="true" prefWidth="Infinity" VBox.vgrow="ALWAYS"
+                          text="123d1a32s1d3as21d3a2s1d3a2s1d3a2s1d3a2s1d3a2s1d3a2s1d32aasda3s21da32s1d32a1sd">
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </TextArea>
+                <HBox prefWidth="Infinity" alignment="CENTER" spacing="25.0">
+                    <padding>
+                        <Insets bottom="10.0" top="30.0"/>
+                    </padding>
+                    <Button fx:id="docmentLabel" text="文档" textAlignment="CENTER">
+                        <graphic>
+                            <FontIcon iconLiteral="cib-readme"/>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="gethubLabel" text="Github" textAlignment="CENTER">
+                        <graphic>
+                            <FontIcon iconLiteral="cib-github"/>
+                        </graphic>
+                    </Button>
+                    <Button fx:id="otherLabel" text="赞助" textAlignment="CENTER">
+                        <graphic>
+                            <FontIcon iconLiteral="cib-buy-me-a-coffee"/>
+                        </graphic>
+                    </Button>
+                </HBox>
+            </VBox>
+        </Tab>
+        <Tab fx:id="setupTab" text="设置">
+            <graphic>
+                <FontIcon iconLiteral="cil-settings" iconColor="white"/>
+            </graphic>
+        </Tab>
+    </TabPane>
+</VBox>

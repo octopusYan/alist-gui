@@ -1,0 +1,176 @@
+@import "root.css";
+
+/**************************************************
+ * Window Header
+**************************************************/
+#windowHeader .iconButton {
+    /*-fx-max-height: 5px;*/
+    /*-fx-max-width: 5px;*/
+    -fx-border-radius: 15;
+}
+
+#rootPane #closeIcon {
+    -fx-color: #fa6057;
+    -fx-opacity: 0.5;
+}
+
+#rootPane #closeIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#rootPane #minimizeIcon {
+    -fx-color: #fbbc2e;
+    -fx-opacity: 0.5;
+}
+
+#rootPane #minimizeIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#rootPane #alwaysOnTopIcon {
+    -fx-color: #27c940;
+    -fx-opacity: 0.5;
+}
+
+#rootPane #alwaysOnTopIcon:hover {
+    -fx-opacity: 1.0;
+}
+
+#rootPane #alwaysOnTopIcon:always-on-top {
+    -fx-opacity: 1.0;
+}
+
+/**************************************************
+ * Tab label
+**************************************************/
+
+#tabPane .tab-header-area {
+    -fx-background-radius: 10;
+    -fx-background-color: #0000;
+}
+
+#tabPane .headers-region {
+    -fx-alignment: TOP_CENTER;
+    -fx-background-color: #18181a;
+    -fx-background-radius: 10;
+    -fx-padding: 5 0 5 0;
+}
+
+#tabPane .tab-header-background {
+    -fx-background-color: #0000;
+}
+
+#tabPane .tab {
+    -fx-text-fill: white;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 10;
+    -fx-background-color: #0000;
+    -fx-border-width: 0;
+}
+
+#tabPane .tab-label {
+    -fx-font-size: 15px;
+    -fx-text-fill: #707079;
+}
+
+#tabPane .tab:selected {
+    -fx-background-color: #2c69e0;
+}
+
+#tabPane .tab:selected .tab-label {
+    -fx-text-fill: white;
+}
+
+/**************************************************
+ * Main View
+**************************************************/
+#homeLabel {
+    -fx-font-size: 35px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-font-family: 'JetBrains Mono';
+}
+
+#statusLabel {
+    -fx-padding: 2 5 2 5;
+    -fx-text-fill: black;
+    -fx-background-color: #1bc964;
+    -fx-background-radius: 10;
+    -fx-text-alignment: CENTER;
+    -fx-border-radius: 10;
+    -fx-border-color: black;
+}
+
+.controlMenu {
+    -fx-font-size: 15;
+    -fx-background-radius: 10px;
+    -fx-padding: 10 40 10 40;
+    -fx-border-radius: 10;
+}
+
+.controlMenu:focused {
+    -fx-opacity: 0.5;
+}
+
+#startButton {
+    -fx-background-color: #fa6057;
+    -fx-text-fill: white;
+    -fx-opacity: 1.0;
+}
+
+#passwordButton {
+    -fx-background-color: #1bc964;
+    -fx-opacity: 1.0;
+}
+
+#restartButton {
+    -fx-background-color: linear-gradient(#57b4f2, #9198e5);
+    -fx-text-fill: white;
+    -fx-opacity: 1.0;
+}
+
+#moreButton {
+    -fx-background-color: #0000;
+    -fx-text-fill: #9254d1;
+    -fx-border-color: #9254d1;
+    -fx-border-width: 2px;
+    -fx-opacity: 1.0;
+}
+
+#tabPane .tab:selected .focus-indicator {
+    -fx-border-width: 0;
+    -fx-border-color: #0000;
+}
+
+#logArea {
+    -fx-text-fill: #e3e4e4;
+    -fx-font-family: 'JetBrains Mono';
+    -fx-font-size: 20;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-color: #18181c;
+}
+
+#logArea .content {
+    -fx-padding: 15;
+    -fx-background-radius: 15;
+    -fx-background-color: #18181c;
+    -fx-border-radius: 15;
+    -fx-border-color: transparent;
+}
+
+#logArea .scroll-pane {
+     -fx-background-color: transparent;
+ }
+#logArea .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+#logArea:focused {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: transparent;
+    -fx-background-color: #18181c;
+}
