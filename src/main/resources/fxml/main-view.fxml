@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox fx:id="mainView" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      stylesheets="@../css/main-view.css" prefWidth="720" prefHeight="700"
+      fx:controller="cn.octopusyan.alistgui.controller.MainController">
+    <padding>
+        <Insets left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <HBox alignment="TOP_CENTER" prefWidth="Infinity">
+        <Label fx:id="homeLabel" alignment="CENTER" text="AList GUI"/>
+        <Label fx:id="statusLabel" alignment="TOP_CENTER" text="%main.status.label-running">
+            <HBox.margin>
+                <Insets left="-10.0" top="-5"/>
+            </HBox.margin>
+        </Label>
+    </HBox>
+    <HBox alignment="TOP_CENTER" prefWidth="Infinity" spacing="25.0">
+        <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </padding>
+        <VBox.margin>
+            <Insets bottom="10.0" top="10.0"/>
+        </VBox.margin>
+        <Button fx:id="startButton" styleClass="control-menu" text="%main.control.start"/>
+        <Button fx:id="passwordButton" styleClass="control-menu" text="%main.control.password"/>
+        <Button fx:id="restartButton" styleClass="control-menu" text="%main.control.restart"/>
+        <Button fx:id="moreButton" styleClass="control-menu" text="%main.control.more"/>
+    </HBox>
+    <TextArea fx:id="logArea" editable="false" prefWidth="Infinity"
+              text="123d1a32s1d3as21d3a2s1d3a2s1d3a2s1d3a2s1d3a2s1d3a2s1d32aasda3s21da32s1d32a1sd"
+              wrapText="true" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+            <Insets bottom="10.0" top="10.0"/>
+        </VBox.margin>
+    </TextArea>
+</VBox>

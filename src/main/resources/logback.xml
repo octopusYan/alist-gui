@@ -5,7 +5,7 @@
     <property name="CHARSET" value="utf-8"/>
     <property name="logback.app" value="alist-gui"/>
     <!-- 彩色日志格式 -->
-    <property name="CONSOLE_LOG_PATTERN" value="%highlight(%d{HH:mm:ss.SSS}) ${logback.app} %boldYellow([%thread]) %highlight(%-5level) %cyan(%logger{36}) - %mdc{client} [%X{trace_id}] %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN" value="%highlight(%d{YYYY:MM:dd HH:mm:ss.SSS}) ${logback.app} %boldYellow([%thread]) %highlight(%-5level) %cyan(%logger{36}) - %mdc{client} [%X{trace_id}] %msg%n"/>
 
     <!--输出到控制台 ConsoleAppender-->
     <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">

@@ -12,33 +12,14 @@ import java.io.IOException;
  * @author octopus_yan@foxmail.com
  */
 public class ProcessesUtil {
+
     private static final Logger logger = LoggerFactory.getLogger(ProcessesUtil.class);
-    private static final String NEWLINE = System.lineSeparator();
+    private static final String NEW_LINE = System.lineSeparator();
     private static final DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
 
     public static boolean exec(String command) {
         try {
-            exec(command, new OnExecuteListener() {
-                @Override
-                public void onExecute(String msg) {
-
-                }
-
-                @Override
-                public void onExecuteSuccess(int exitValue) {
-
-                }
-
-                @Override
-                public void onExecuteError(Exception e) {
-
-                }
-
-                @Override
-                public void onExecuteOver() {
-
-                }
-            });
+            exec(command, msg -> {});
             handler.waitFor();
         } catch (Exception e) {
             logger.error("", e);
@@ -50,7 +31,7 @@ public class ProcessesUtil {
         LogOutputStream logout = new LogOutputStream() {
             @Override
             protected void processLine(String line, int logLevel) {
-                if (listener != null) listener.onExecute(line + NEWLINE);
+                if (listener != null) listener.onExecute(line + NEW_LINE);
             }
         };
 
@@ -81,11 +62,8 @@ public class ProcessesUtil {
 
     public interface OnExecuteListener {
         void onExecute(String msg);
-
-        void onExecuteSuccess(int exitValue);
-
-        void onExecuteError(Exception e);
-        void onExecuteOver();
+        default void onExecuteSuccess(int exitValue){}
+        default void onExecuteError(Exception e){}
     }
 
     /**

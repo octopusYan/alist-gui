@@ -1,0 +1,91 @@
+/**************************************************
+ * Main View
+**************************************************/
+#homeLabel {
+  -fx-font-size: 35;
+  -fx-font-weight: bold;
+}
+
+#statusLabel {
+  -fx-padding: 2 5 2 5;
+  -fx-text-fill: white;
+  -fx-font-size: 15;
+  -fx-background-color: #1bc964;
+  -fx-background-radius: 10;
+  -fx-text-alignment: CENTER;
+  -fx-border-radius: 10;
+}
+
+.control-menu {
+  -fx-font-size: 15;
+  -fx-background-radius: 15;
+  -fx-padding: 10 40 10 40;
+  -fx-border-radius: 15;
+  -fx-border-width: 2;
+  -fx-opacity: 0.9;
+
+  &:hover {
+    -fx-opacity: 1.0;
+  }
+}
+
+#startButton {
+  -fx-background-color: #fa6057;
+  -fx-border-color: #fa6057;
+  -fx-text-fill: white;
+}
+
+#passwordButton {
+  -fx-background-color: #1bc964;
+  -fx-border-color: #1bc964;
+}
+
+#restartButton {
+  -fx-background-color: linear-gradient(#57b4f2, #9198e5);
+  -fx-border-color: linear-gradient(#57b4f2, #9198e5);
+  -fx-text-fill: white;
+}
+
+#moreButton {
+  -fx-background-color: transparent;
+  -fx-text-fill: #9254d1;
+  -fx-border-color: #9254d1;
+  -fx-border-width: 2;
+}
+
+#logArea {
+  -fx-font-family: "Lucida Console";
+  -fx-font-size: 20;
+  -fx-background-radius: 15;
+  -fx-border-radius: 15;
+  -fx-border-color: transparent;
+  -fx-background-insets: 0;
+  -fx-background-color: #e9e9e9;
+
+  &:focused {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: transparent;
+    -fx-background-color: #e9e9e9;
+  }
+
+  .content {
+    -fx-padding: 0 15 0 15;
+    -fx-background-radius: 15;
+    -fx-background-color: #e9e9e9;
+    -fx-border-radius: 15;
+    -fx-border-color: transparent;
+
+    &:focused {
+      -fx-background-color: #e9e9e9;
+    }
+  }
+
+  .scroll-pane {
+    -fx-background-color: transparent;
+
+    .viewport {
+      -fx-background-color: transparent;
+    }
+  }
+}

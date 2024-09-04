@@ -1,78 +1,81 @@
 package cn.octopusyan.alistgui;
 
+import atlantafx.base.theme.PrimerLight;
 import cn.octopusyan.alistgui.config.AppConstant;
-import cn.octopusyan.alistgui.config.CustomConfig;
-import cn.octopusyan.alistgui.controller.MainController;
+import cn.octopusyan.alistgui.config.ConfigManager;
+import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.http.HttpConfig;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
 import cn.octopusyan.alistgui.util.AlertUtil;
-import cn.octopusyan.alistgui.util.FxmlUtil;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
-import java.util.Objects;
 
 public class Application extends javafx.application.Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    @Getter
+    private static Stage primaryStage;
 
     @Override
     public void init() throws Exception {
         logger.info("application init ...");
         // 初始化客户端配置
-        CustomConfig.init();
+        ConfigManager.load();
     }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        Application.primaryStage = primaryStage;
 
         logger.info("application start ...");
 
         // 初始化弹窗工具
         AlertUtil.initOwner(primaryStage);
 
-        // http请求工具初始化
-        HttpConfig httpConfig = new HttpConfig();
-        if (CustomConfig.hasProxy()) {
-            InetSocketAddress unresolved = InetSocketAddress.createUnresolved(CustomConfig.proxyHost(), CustomConfig.proxyPort());
-            httpConfig.setProxySelector(ProxySelector.of(unresolved));
-        }
-        httpConfig.setConnectTimeout(10);
-        HttpUtil.init(httpConfig);
-
         //  全局异常处理
         Thread.setDefaultUncaughtExceptionHandler(this::showErrorDialog);
         Thread.currentThread().setUncaughtExceptionHandler(this::showErrorDialog);
 
-        // 启动主界面
-        try {
-            FXMLLoader loader = FxmlUtil.load("root-view");
-            loader.setControllerFactory(c -> new MainController(primaryStage));
-            Parent root = loader.load();//底层面板
+        // http请求工具初始化
+        HttpConfig httpConfig = new HttpConfig();
 
-            Scene scene = new Scene(root);
-            scene.getStylesheets().addAll(Objects.requireNonNull(getClass().getResource("/css/root.css")).toExternalForm());
-            scene.setFill(Color.TRANSPARENT);
-
-            primaryStage.setScene(scene);
-            primaryStage.initStyle(StageStyle.TRANSPARENT);
-            primaryStage.setTitle(String.format("%s v%s", AppConstant.APP_TITLE, AppConstant.APP_VERSION));
-            primaryStage.show();
-
-            MainController controller = loader.getController();
-            controller.setApplication(this);
-        } catch (Throwable t) {
-            showErrorDialog(Thread.currentThread(), t);
+        if(!ProxySetup.NO_PROXY.equals(ConfigManager.proxySetup())) {
+            // 系统代理
+            if (ProxySetup.SYSTEM.equals(ConfigManager.proxySetup())) {
+                httpConfig.setProxySelector(ProxySelector.getDefault());
+            }
+            // 自定义代理
+            if (ProxySetup.MANUAL.equals(ConfigManager.proxySetup()) && ConfigManager.hasProxy()) {
+                InetSocketAddress unresolved = InetSocketAddress.createUnresolved(ConfigManager.proxyHost(), ConfigManager.getProxyPort());
+                httpConfig.setProxySelector(ProxySelector.of(unresolved));
+            }
         }
+
+        httpConfig.setConnectTimeout(10);
+        HttpUtil.init(httpConfig);
+
+        // i18n
+        Context.setLanguage(ConfigManager.language());
+
+        // 主题样式
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+
+        // 启动主界面
+        Scene scene = Context.initScene();
+        primaryStage.setScene(scene);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+        primaryStage.setTitle(String.format("%s v%s", AppConstant.APP_TITLE, AppConstant.APP_VERSION));
+        primaryStage.show();
 
         logger.info("application start over ...");
     }
@@ -85,9 +88,12 @@ public class Application extends javafx.application.Application {
     @Override
     public void stop() throws Exception {
         logger.info("application stop ...");
+        // 保存应用数据
+        ConfigManager.save();
         // 停止所有线程
         ThreadPoolManager.getInstance().shutdown();
-        // 保存应用数据
-        CustomConfig.store();
+        // 关闭主界面
+        Platform.exit();
+        System.exit(0);
     }
 }

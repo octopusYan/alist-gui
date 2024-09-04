@@ -1,6 +1,10 @@
 package cn.octopusyan.alistgui.manager.http;
 
-import com.alibaba.fastjson2.JSONObject;
+import cn.octopusyan.alistgui.config.ConfigManager;
+import cn.octopusyan.alistgui.enums.ProxySetup;
+import cn.octopusyan.alistgui.model.ProxyInfo;
+import cn.octopusyan.alistgui.util.JsonUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,7 +16,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -57,15 +61,20 @@ public class HttpUtil {
         return builder.build();
     }
 
-    public HttpUtil proxy(String host, int port) {
+    public void proxy(ProxySetup setup, ProxyInfo proxy) {
         if (httpClient == null)
             throw new RuntimeException("are you ready ?");
 
-        InetSocketAddress unresolved = InetSocketAddress.createUnresolved(host, port);
-        ProxySelector other = ProxySelector.of(unresolved);
-        this.httpConfig.setProxySelector(other);
+        switch (setup) {
+            case NO_PROXY -> clearProxy();
+            case SYSTEM -> httpConfig.setProxySelector(ProxySelector.getDefault());
+            case MANUAL -> {
+                InetSocketAddress unresolved = InetSocketAddress.createUnresolved(ConfigManager.proxyHost(), ConfigManager.getProxyPort());
+                httpConfig.setProxySelector(ProxySelector.of(unresolved));
+            }
+        }
+
         this.httpClient = createClient(httpConfig);
-        return this;
     }
 
     public void clearProxy() {
@@ -76,24 +85,20 @@ public class HttpUtil {
         httpClient = createClient(httpConfig);
     }
 
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public String get(String uri, JSONObject header, JSONObject param) throws IOException, InterruptedException {
+    public String get(String uri, JsonNode header, JsonNode param) throws IOException, InterruptedException {
         HttpRequest.Builder request = getRequest(uri + createFormParams(param), header).GET();
         HttpResponse<String> response = httpClient.send(request.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         return response.body();
     }
 
-    public String post(String uri, JSONObject header, JSONObject param) throws IOException, InterruptedException {
+    public String post(String uri, JsonNode header, JsonNode param) throws IOException, InterruptedException {
         HttpRequest.Builder request = getRequest(uri, header)
-                .POST(HttpRequest.BodyPublishers.ofString(param.toJSONString()));
+                .POST(HttpRequest.BodyPublishers.ofString(JsonUtil.toJsonString(param)));
         HttpResponse<String> response = httpClient.send(request.build(), HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
         return response.body();
     }
 
-    public String postForm(String uri, JSONObject header, JSONObject param) throws IOException, InterruptedException {
+    public String postForm(String uri, JsonNode header, JsonNode param) throws IOException, InterruptedException {
         HttpRequest.Builder request = getRequest(uri + createFormParams(param), header)
                 .POST(HttpRequest.BodyPublishers.noBody());
 
@@ -101,35 +106,37 @@ public class HttpUtil {
         return response.body();
     }
 
-    private HttpRequest.Builder getRequest(String uri, JSONObject header) {
+    private HttpRequest.Builder getRequest(String uri, JsonNode header) {
         HttpRequest.Builder request = HttpRequest.newBuilder();
         // 请求地址
         request.uri(URI.create(uri));
         // 请求头
         if (header != null && !header.isEmpty()) {
-            for (String key : header.keySet()) {
-                request.header(key, header.getString(key));
+            for (Map.Entry<String, JsonNode> property : header.properties()) {
+                String key = property.getKey();
+                request.header(key, JsonUtil.toJsonString(property.getValue()));
             }
         }
         return request;
     }
 
-    private String createFormParams(JSONObject params) {
+    private String createFormParams(JsonNode params) {
         StringBuilder formParams = new StringBuilder();
         if (params == null) {
             return formParams.toString();
         }
-        for (String key : params.keySet()) {
-            Object value = params.get(key);
-            if (value instanceof String) {
-                value = URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8);
+        for (Map.Entry<String, JsonNode> property : params.properties()) {
+            String key = property.getKey();
+            JsonNode value = params.get(key);
+            if (value.isTextual()) {
+                String value_ = URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8);
+                formParams.append("&").append(key).append("=").append(value_);
+            } else if (value.isNumber()) {
                 formParams.append("&").append(key).append("=").append(value);
-            } else if (value instanceof Number) {
-                formParams.append("&").append(key).append("=").append(value);
-            } else if (value instanceof List) {
-                formParams.append("&").append(key).append("=").append(params.getJSONArray(key));
+            } else if (value.isArray()) {
+                formParams.append("&").append(key).append("=").append(JsonUtil.toJsonString(value));
             } else {
-                formParams.append("&").append(key).append("=").append(params.getJSONObject(key));
+                formParams.append("&").append(key).append("=").append(JsonUtil.toJsonString(value));
             }
         }
         if (!formParams.isEmpty()) {

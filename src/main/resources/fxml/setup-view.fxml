@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane fx:id="setupView" prefHeight="700" prefWidth="720" stylesheets="@../css/setup-view.css"
+          xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+          fx:controller="cn.octopusyan.alistgui.controller.SetupController">
+    <padding>
+        <Insets left="10.0" right="10.0" top="20.0"/>
+    </padding>
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="100"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="SOMETIMES"/>
+        <RowConstraints vgrow="SOMETIMES"/>
+    </rowConstraints>
+    <VBox spacing="20">
+        <CheckBox fx:id="autoStartCheckBox" text="%setup.auto-start.label"/>
+        <CheckBox fx:id="silentStartupCheckBox" text="%setup.silent-startup.label"/>
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label text="%setup.language"/>
+            <ComboBox fx:id="languageComboBox"/>
+        </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="%setup.proxyInfo" styleClass="proxyInfo-label"/>
+                <ComboBox fx:id="proxySetupComboBox"/>
+            </HBox>
+<!--            <HBox spacing="10" visible="false">-->
+<!--                <RadioButton fx:id="noProxy" text="%proxyInfo.setup.label.no_proxy"/>-->
+<!--                <RadioButton fx:id="systemProxy" text="%proxyInfo.setup.label.system"/>-->
+<!--                <RadioButton fx:id="manualProxy" text="%proxyInfo.setup.label.manual"/>-->
+<!--            </HBox>-->
+            <VBox fx:id="proxySetupPane" spacing="10">
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="%setup.proxyInfo.host"/>
+                    <TextField fx:id="proxyHost" promptText="127.0.0.1"/>
+                </HBox>
+                <HBox spacing="20" alignment="CENTER_LEFT">
+                    <Label text="%setup.proxyInfo.port"/>
+                    <TextField fx:id="proxyPort" promptText="8080"/>
+                </HBox>
+            </VBox>
+    </VBox>
+    <AnchorPane GridPane.rowIndex="1">
+        <VBox alignment="CENTER" spacing="10"
+              AnchorPane.bottomAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <HBox alignment="CENTER" styleClass="shield">
+                <Label text="%alist.version" styleClass="shield-name"/>
+                <Label fx:id="alistVersion" styleClass="shield-version"/>
+            </HBox>
+            <HBox alignment="CENTER" styleClass="shield">
+                <Label text="%app.version" styleClass="shield-name"/>
+                <Label text="${project.version}" styleClass="shield-version"/>
+            </HBox>
+            <Button text="%app.update"/>
+            <Button text="%alist.update"/>
+        </VBox>
+    </AnchorPane>
+</GridPane>

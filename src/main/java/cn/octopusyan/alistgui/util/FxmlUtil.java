@@ -1,9 +1,11 @@
 package cn.octopusyan.alistgui.util;
 
+import cn.octopusyan.alistgui.config.Context;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.JavaFXBuilderFactory;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ResourceBundle;
 
 /**
  * FXML 工具
@@ -13,11 +15,15 @@ import java.nio.charset.StandardCharsets;
 public class FxmlUtil {
 
     public static FXMLLoader load(String name) {
+        return load(name, Context.getLanguageResource().get());
+    }
+
+    public static FXMLLoader load(String name, ResourceBundle bundle) {
         String prefix = "/fxml/";
         String suffix = ".fxml";
         return new FXMLLoader(
                 FxmlUtil.class.getResource(prefix + name + suffix),
-                null,
+                bundle,
                 new JavaFXBuilderFactory(),
                 null,
                 StandardCharsets.UTF_8

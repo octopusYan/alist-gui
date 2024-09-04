@@ -6,7 +6,7 @@
 
     <groupId>cn.octopusyan</groupId>
     <artifactId>alist-gui</artifactId>
-    <version>0.1.0</version>
+    <version>0.1</version>
     <name>alist-gui</name>
 
     <organization>
@@ -15,7 +15,7 @@
     </organization>
 
     <inceptionYear>2024</inceptionYear>
-    <description>alist windows gui</description>
+    <description>AList windows gui</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -28,11 +28,13 @@
         <javafx.version>17.0.6</javafx.version>
         <slf4j.version>2.0.16</slf4j.version>
         <logback.version>1.4.14</logback.version>
-        <fastjson.version>2.0.52</fastjson.version>
-        <hutool.version>5.8.25</hutool.version>
+        <hutool.version>5.8.32</hutool.version>
         <common-lang3.version>3.16.0</common-lang3.version>
-        <common-io.version>2.16.1</common-io.version>
+<!--        <common-io.version>2.16.1</common-io.version>-->
         <common-exec.version>1.4.0</common-exec.version>
+        <lombok.version>1.18.32</lombok.version>
+        <ikonli.version>12.3.1</ikonli.version>
+        <gluonhq-emoji.version>1.0.1</gluonhq-emoji.version>
     </properties>
 
     <dependencies>
@@ -47,6 +49,13 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
 
         <!-- slf4j -->
         <!-- https://slf4j.org/manual.html -->
@@ -87,12 +96,6 @@
             <artifactId>commons-lang3</artifactId>
             <version>${common-lang3.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${common-io.version}</version>
-        </dependency>
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-exec -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -100,24 +103,45 @@
             <version>${common-exec.version}</version>
         </dependency>
 
-        <!-- JSON -->
-        <!-- https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2 -->
+        <!-- hutool -->
         <dependency>
-            <groupId>com.alibaba.fastjson2</groupId>
-            <artifactId>fastjson2</artifactId>
-            <version>${fastjson.version}</version>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.15.4</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-javafx -->
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
-            <version>12.3.1</version>
+            <version>${ikonli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fontawesome-pack</artifactId>
+            <version>${ikonli.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-coreui-pack</artifactId>
-            <version>12.3.1</version>
+            <version>${ikonli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.gluonhq</groupId>
+            <artifactId>emoji</artifactId>
+            <version>${gluonhq-emoji.version}</version>
         </dependency>
 
     </dependencies>
@@ -164,6 +188,7 @@
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>exe</nonFilteredFileExtension>
                         <nonFilteredFileExtension>dll</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
