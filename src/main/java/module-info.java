@@ -15,6 +15,7 @@ module cn.octopusyan.alistgui {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.yaml;
     requires atlantafx.base;
+    requires proxy.vole;
 
     exports cn.octopusyan.alistgui;
     opens cn.octopusyan.alistgui to javafx.fxml;

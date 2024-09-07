@@ -1,10 +1,11 @@
 package cn.octopusyan.alistgui.manager.http;
 
-import cn.octopusyan.alistgui.config.ConfigManager;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.markusbernhardt.proxy.ProxySearch;
+import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -28,6 +29,19 @@ public class HttpUtil {
     private volatile static HttpUtil util;
     private volatile HttpClient httpClient;
     private final HttpConfig httpConfig;
+    public static final ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
+
+    static {
+        proxySearch.addStrategy(ProxySearch.Strategy.WIN);
+        proxySearch.addStrategy(ProxySearch.Strategy.OS_DEFAULT);
+        proxySearch.addStrategy(ProxySearch.Strategy.IE);
+        proxySearch.addStrategy(ProxySearch.Strategy.FIREFOX);
+        proxySearch.addStrategy(ProxySearch.Strategy.JAVA);
+        // PAC 代理查询
+        proxySearch.setPacCacheSettings(20, 1000 * 60 * 10, BufferedProxySelector.CacheScope.CACHE_SCOPE_HOST);
+        // 设置系统默认代理
+        ProxySelector.setDefault(proxySearch.getProxySelector());
+    }
 
     private HttpUtil(HttpConfig httpConfig) {
         this.httpConfig = httpConfig;
@@ -69,7 +83,7 @@ public class HttpUtil {
             case NO_PROXY -> clearProxy();
             case SYSTEM -> httpConfig.setProxySelector(ProxySelector.getDefault());
             case MANUAL -> {
-                InetSocketAddress unresolved = InetSocketAddress.createUnresolved(ConfigManager.proxyHost(), ConfigManager.getProxyPort());
+                InetSocketAddress unresolved = InetSocketAddress.createUnresolved(proxy.getHost(), Integer.parseInt(proxy.getPort()));
                 httpConfig.setProxySelector(ProxySelector.of(unresolved));
             }
         }
