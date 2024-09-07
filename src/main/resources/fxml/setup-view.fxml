@@ -3,59 +3,48 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<GridPane fx:id="setupView" prefHeight="700" prefWidth="720" stylesheets="@../css/setup-view.css"
-          xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-          fx:controller="cn.octopusyan.alistgui.controller.SetupController">
+<AnchorPane fx:id="setupView" prefHeight="700" prefWidth="720" stylesheets="@../css/setup-view.css"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="cn.octopusyan.alistgui.controller.SetupController">
     <padding>
         <Insets left="10.0" right="10.0" top="20.0"/>
     </padding>
-    <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" percentWidth="100"/>
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints vgrow="SOMETIMES"/>
-        <RowConstraints vgrow="SOMETIMES"/>
-    </rowConstraints>
-    <VBox spacing="20">
+    <VBox spacing="20" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0">
         <CheckBox fx:id="autoStartCheckBox" text="%setup.auto-start.label"/>
         <CheckBox fx:id="silentStartupCheckBox" text="%setup.silent-startup.label"/>
         <HBox alignment="CENTER_LEFT" spacing="10">
             <Label text="%setup.language"/>
             <ComboBox fx:id="languageComboBox"/>
         </HBox>
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <Label styleClass="proxy-label" text="%setup.proxy"/>
+            <ComboBox fx:id="proxySetupComboBox"/>
+            <Button fx:id="proxyCheck" text="%setup.proxy.test"/>
+        </HBox>
+        <VBox fx:id="proxySetupPane" spacing="10">
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Label text="%setup.proxyInfo" styleClass="proxyInfo-label"/>
-                <ComboBox fx:id="proxySetupComboBox"/>
+                <Label text="%setup.proxy.host"/>
+                <TextField fx:id="proxyHost" promptText="127.0.0.1"/>
             </HBox>
-<!--            <HBox spacing="10" visible="false">-->
-<!--                <RadioButton fx:id="noProxy" text="%proxyInfo.setup.label.no_proxy"/>-->
-<!--                <RadioButton fx:id="systemProxy" text="%proxyInfo.setup.label.system"/>-->
-<!--                <RadioButton fx:id="manualProxy" text="%proxyInfo.setup.label.manual"/>-->
-<!--            </HBox>-->
-            <VBox fx:id="proxySetupPane" spacing="10">
-                <HBox spacing="20" alignment="CENTER_LEFT">
-                    <Label text="%setup.proxyInfo.host"/>
-                    <TextField fx:id="proxyHost" promptText="127.0.0.1"/>
-                </HBox>
-                <HBox spacing="20" alignment="CENTER_LEFT">
-                    <Label text="%setup.proxyInfo.port"/>
-                    <TextField fx:id="proxyPort" promptText="8080"/>
-                </HBox>
-            </VBox>
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="%setup.proxy.port"/>
+                <TextField fx:id="proxyPort" promptText="8080"/>
+            </HBox>
+        </VBox>
     </VBox>
-    <AnchorPane GridPane.rowIndex="1">
-        <VBox alignment="CENTER" spacing="10"
-              AnchorPane.bottomAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+    <AnchorPane AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0">
+        <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="50" AnchorPane.rightAnchor="0"
+              AnchorPane.topAnchor="0">
             <HBox alignment="CENTER" styleClass="shield">
-                <Label text="%alist.version" styleClass="shield-name"/>
-                <Label fx:id="alistVersion" styleClass="shield-version"/>
+                <Label styleClass="shield-name" text="%alist.version"/>
+                <Label fx:id="aListVersion" styleClass="shield-version"/>
             </HBox>
             <HBox alignment="CENTER" styleClass="shield">
-                <Label text="%app.version" styleClass="shield-name"/>
-                <Label text="${project.version}" styleClass="shield-version"/>
+                <Label styleClass="shield-name" text="%app.version"/>
+                <Label styleClass="shield-version" text="v${project.version}"/>
             </HBox>
-            <Button text="%app.update"/>
-            <Button text="%alist.update"/>
+            <Button fx:id="checkAppVersion" text="%app.update"/>
+            <Button fx:id="checkAListVersion" onAction="#checkAListUpdate" text="%alist.update"/>
         </VBox>
     </AnchorPane>
-</GridPane>
+</AnchorPane>

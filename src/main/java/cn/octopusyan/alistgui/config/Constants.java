@@ -10,13 +10,15 @@ import java.nio.file.Paths;
  *
  * @author octopus_yan@foxmail.com
  */
-public class AppConstant {
+public class Constants {
     public static final String APP_TITLE = PropertiesUtils.getInstance().getProperty("app.title");
     public static final String APP_NAME = PropertiesUtils.getInstance().getProperty("app.name");
     public static final String APP_VERSION = PropertiesUtils.getInstance().getProperty("app.version");
     public static final String DATA_DIR_PATH = Paths.get(".").toFile().getAbsolutePath();
+    public static final String BIN_DIR_PATH = STR."\{DATA_DIR_PATH}\{File.separator}bin";
+    public static final String UPGRADE_PATH = STR."\{BIN_DIR_PATH}\{File.separator}upgrade.yaml";
     public static final String TMP_DIR_PATH = System.getProperty("java.io.tmpdir") + APP_NAME;
-    public static final String CONFIG_DIR_PATH = DATA_DIR_PATH + File.separator + "config";
-    public static final String GUI_CONFIG_PATH = CONFIG_DIR_PATH + File.separator + "gui.yaml";
-    public static final String BAK_FILE_PATH = AppConstant.TMP_DIR_PATH + File.separator + "bak";
+    public static final String CONFIG_DIR_PATH = STR."\{DATA_DIR_PATH}\{File.separator}config";
+    public static final String GUI_CONFIG_PATH = STR."\{CONFIG_DIR_PATH}\{File.separator}gui.yaml";
+    public static final String BAK_FILE_PATH = STR."\{Constants.TMP_DIR_PATH}\{File.separator}bak";
 }

@@ -18,21 +18,21 @@
     <description>AList windows gui</description>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <java.version>17</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <junit.version>5.10.0</junit.version>
-        <javafx.version>17.0.6</javafx.version>
+        <javafx.version>21.0.4</javafx.version>
         <slf4j.version>2.0.16</slf4j.version>
         <logback.version>1.4.14</logback.version>
         <hutool.version>5.8.32</hutool.version>
         <common-lang3.version>3.16.0</common-lang3.version>
-<!--        <common-io.version>2.16.1</common-io.version>-->
         <common-exec.version>1.4.0</common-exec.version>
         <lombok.version>1.18.32</lombok.version>
+        <jackson.version>2.15.4</jackson.version>
         <ikonli.version>12.3.1</ikonli.version>
         <gluonhq-emoji.version>1.0.1</gluonhq-emoji.version>
     </properties>
@@ -50,6 +50,7 @@
             <version>${javafx.version}</version>
         </dependency>
 
+        <!-- https://mkpaz.github.io/atlantafx/ -->
         <dependency>
             <groupId>io.github.mkpaz</groupId>
             <artifactId>atlantafx-base</artifactId>
@@ -127,7 +128,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.15.4</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.kordamp.ikonli/ikonli-javafx -->
@@ -183,8 +184,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>21</source>
+                    <target>21</target>
+                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
 
@@ -196,9 +198,43 @@
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>exe</nonFilteredFileExtension>
                         <nonFilteredFileExtension>dll</nonFilteredFileExtension>
-                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                        <filteredFileExtension>scss</filteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
+            </plugin>
+
+            <!-- https://github.com/HebiRobotics/sass-cli-maven-plugin -->
+            <plugin>
+                <groupId>us.hebi.sass</groupId>
+                <artifactId>sass-cli-maven-plugin</artifactId>
+                <version>1.0.3</version>
+                <configuration>
+                    <sassVersion>1.78.0</sassVersion>
+                    <args> <!-- Any argument that should be forwarded to the sass cli -->
+                        <arg>
+                            ${project.basedir}/src/main/resources/css/root.scss:${project.basedir}/target/classes/css/root.css
+                        </arg>
+                        <arg>
+                            ${project.basedir}/src/main/resources/css/root-view.scss:${project.basedir}/target/classes/css/root-view.css
+                        </arg>
+                        <arg>
+                            ${project.basedir}/src/main/resources/css/main-view.scss:${project.basedir}/target/classes/css/main-view.css
+                        </arg>
+                        <arg>
+                            ${project.basedir}/src/main/resources/css/setup-view.scss:${project.basedir}/target/classes/css/setup-view.css
+                        </arg>
+                        <arg>--no-source-map</arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sass-exec</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -210,8 +246,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>cn.octopusyan.alistgui/cn.octopusyan.alistgui.AppLuncher
-                            </mainClass>
+                            <mainClass>cn.octopusyan.alistgui/cn.octopusyan.alistgui.AppLauncher</mainClass>
                             <launcher>launcher</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -223,13 +258,14 @@
                 </executions>
             </plugin>
 
+            <!-- https://github.com/fvarrui/JavaPackager -->
             <plugin>
                 <groupId>io.github.fvarrui</groupId>
                 <artifactId>javapackager</artifactId>
                 <version>1.7.7-SNAPSHOT</version>
                 <configuration>
                     <bundleJre>true</bundleJre>
-                    <mainClass>cn.octopusyan.alistgui.AppLuncher</mainClass>
+                    <mainClass>cn.octopusyan.alistgui.AppLauncher</mainClass>
                     <generateInstaller>false</generateInstaller>
                 </configuration>
                 <executions>

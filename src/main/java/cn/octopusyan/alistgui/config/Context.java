@@ -65,14 +65,17 @@ public class Context {
     // 获取控制工厂
     public static Callback<Class<?>, Object> getControlFactory() {
         return type -> {
-            if (type.equals(RootController.class)) {
-                return new RootController();
-            } else if (type.equals(MainController.class)) {
-                return new MainController();
-            } else if (type.equals(SetupController.class)) {
-                return new SetupController();
+            try {
+                return switch (type.getDeclaredConstructor().newInstance()) {
+                    case RootController root -> root;
+                    case MainController main -> main;
+                    case SetupController setup -> setup;
+                    default -> throw new IllegalStateException(STR."Unexpected value: \{type}");
+                };
+            } catch (Exception e) {
+                log.error("", e);
+                return null;
             }
-            throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 
@@ -130,15 +133,13 @@ public class Context {
      * 初始化 语言
      */
     private static void initI18n() {
-        currentLocaleProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                try {
-                    loadScene();
-                } catch (IOException e) {
-                    log.error("", e);
-                }
-            });
-        });
+        currentLocaleProperty().addListener((_, _, _) -> Platform.runLater(() -> {
+            try {
+                loadScene();
+            } catch (IOException e) {
+                log.error("", e);
+            }
+        }));
     }
 
     /**

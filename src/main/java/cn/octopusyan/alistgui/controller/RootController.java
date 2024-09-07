@@ -47,6 +47,7 @@ public class RootController extends BaseController<VBox> {
     public Button github;
     @FXML
     public Button sponsor;
+
     /**
      * 获取根布局
      *
@@ -71,12 +72,19 @@ public class RootController extends BaseController<VBox> {
     @Override
     public void initViewStyle() {
         // 设置图标
-        ImageView book = EmojiImageUtils.emojiView(EmojiData.emojiFromShortName("book").get(), 25);
-        document.setGraphic(book);
-        ImageView githubIcon = EmojiImageUtils.emojiView(EmojiData.emojiFromShortName("cat").get(), 25);
-        github.setGraphic(githubIcon);
-        ImageView juice = EmojiImageUtils.emojiView(EmojiData.emojiFromShortName("tropical_drink").get(), 25);
-        sponsor.setGraphic(juice);
+        EmojiData.emojiFromShortName("book").ifPresent(icon -> {
+            ImageView book = EmojiImageUtils.emojiView(icon, 25);
+            document.setGraphic(book);
+        });
+        EmojiData.emojiFromShortName("cat").ifPresent(icon -> {
+            ImageView githubIcon = EmojiImageUtils.emojiView(icon, 25);
+            github.setGraphic(githubIcon);
+
+        });
+        EmojiData.emojiFromShortName("tropical_drink").ifPresent(icon -> {
+            ImageView juice = EmojiImageUtils.emojiView(icon, 25);
+            sponsor.setGraphic(juice);
+        });
     }
 
     /**
@@ -84,9 +92,9 @@ public class RootController extends BaseController<VBox> {
      */
     @Override
     public void initViewAction() {
-        closeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> getWindow().close());
-        minimizeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> getWindow().setIconified(true));
-        alwaysOnTopIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        closeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> getWindow().close());
+        minimizeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> getWindow().setIconified(true));
+        alwaysOnTopIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> {
             boolean newVal = !getWindow().isAlwaysOnTop();
             alwaysOnTopIcon.pseudoClassStateChanged(PseudoClass.getPseudoClass("always-on-top"), newVal);
             getWindow().setAlwaysOnTop(newVal);
@@ -101,8 +109,8 @@ public class RootController extends BaseController<VBox> {
             getWindow().setY(event.getScreenY() + yOffset);
         });
 
-        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-            Context.setCurrentViewIndex(newValue);
-        });
+        tabPane.getSelectionModel()
+                .selectedIndexProperty()
+                .addListener((_, _, newValue) -> Context.setCurrentViewIndex(newValue));
     }
 }

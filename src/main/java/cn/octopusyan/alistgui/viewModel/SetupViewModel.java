@@ -1,12 +1,12 @@
 package cn.octopusyan.alistgui.viewModel;
 
-import cn.hutool.core.lang.Validator;
-import cn.hutool.core.net.url.UrlBuilder;
-import cn.octopusyan.alistgui.config.ConfigManager;
+import cn.octopusyan.alistgui.base.BaseTask;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
+import cn.octopusyan.alistgui.manager.ConfigManager;
+import cn.octopusyan.alistgui.task.UpgradeTask;
+import cn.octopusyan.alistgui.util.alert.AlertUtil;
 import javafx.beans.property.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Locale;
 
@@ -20,19 +20,21 @@ public class SetupViewModel {
     private final BooleanProperty silentStartup = new SimpleBooleanProperty(ConfigManager.silentStartup());
     private final StringProperty proxyHost = new SimpleStringProperty(ConfigManager.proxyHost());
     private final StringProperty proxyPort = new SimpleStringProperty(ConfigManager.proxyPort());
-    private final BooleanProperty proxyVerify = new SimpleBooleanProperty(false);
     private final ObjectProperty<Locale> language = new SimpleObjectProperty<>(ConfigManager.language());
     private final ObjectProperty<ProxySetup> proxySetup = new SimpleObjectProperty<>(ConfigManager.proxySetup());
-    private final SimpleStringProperty aListVersion = new SimpleStringProperty(ConfigManager.aListVersion());
+    private final StringProperty aListVersion = new SimpleStringProperty(ConfigManager.aListVersion());
+    private final StringProperty aListNewVersion = new SimpleStringProperty("");
+    private final BooleanProperty aListUpgrade = new SimpleBooleanProperty(false);
+
 
     public SetupViewModel() {
-        aListVersion.addListener((observable, oldValue, newValue) -> ConfigManager.aListVersion(newValue));
-        autoStart.addListener((observable, oldValue, newValue) -> ConfigManager.autoStart(newValue));
-        silentStartup.addListener((observable, oldValue, newValue) -> ConfigManager.silentStartup(newValue));
-        proxySetup.addListener((observable, oldValue, newValue) -> ConfigManager.proxySetup(newValue));
-        proxyHost.addListener((observable, oldValue, newValue) -> ConfigManager.proxyHost(newValue));
-        proxyPort.addListener((observable, oldValue, newValue) -> ConfigManager.proxyPort(newValue));
-        language.addListener((observable, oldValue, newValue) -> Context.setLanguage(newValue));
+        aListVersion.addListener((_, _, newValue) -> ConfigManager.aListVersion(newValue));
+        autoStart.addListener((_, _, newValue) -> ConfigManager.autoStart(newValue));
+        silentStartup.addListener((_, _, newValue) -> ConfigManager.silentStartup(newValue));
+        proxySetup.addListener((_, _, newValue) -> ConfigManager.proxySetup(newValue));
+        proxyHost.addListener((_, _, newValue) -> ConfigManager.proxyHost(newValue));
+        proxyPort.addListener((_, _, newValue) -> ConfigManager.proxyPort(newValue));
+        language.addListener((_, _, newValue) -> Context.setLanguage(newValue));
     }
 
     public BooleanProperty autoStartProperty() {
@@ -63,25 +65,35 @@ public class SetupViewModel {
         return aListVersion;
     }
 
+    public BooleanProperty aListUpgradeProperty() {
+        return aListUpgrade;
+    }
+
+    public StringProperty aListNewVersionProperty() {
+        return aListNewVersion;
+    }
+
     /**
-     * 验证代理地址
-     *
-     * @param address 新的代理地址
-     * @return UrlBuilder, 验证失败时为null
+     * 检查alist更新
      */
-    public UrlBuilder validateAddress(String address) {
-        if (StringUtils.isEmpty(address))
-            return null;
+    public void checkAListUpdate() {
+        var task = new UpgradeTask(this, ConfigManager.aList());
+        task.onListen(new BaseTask.Listener() {
+            @Override
+            public void onSucceeded() {
+                AlertUtil.info(STR."""
+                    当前版本    :   \{aListVersion.get()}
+                    最新版本    :   \{aListNewVersion.get()}
+                    """)
+                        .title("AList 更新提示")
+                        .show();
+            }
 
-        // 验证 URL 的可用性
-        UrlBuilder ub = UrlBuilder.of(address);
-        boolean isUrlValid = Validator.isUrl(address) && ub.getPort() > 0;
-
-        // 设置 proxyVerify 和 proxyVerifyMsg
-        proxyVerify.setValue(isUrlValid);
-
-        if (isUrlValid)
-            return ub;
-        else return null;
+            @Override
+            public void onFailed(Throwable throwable) {
+                AlertUtil.exception(new Exception(throwable)).show();
+            }
+        });
+        task.execute();
     }
 }

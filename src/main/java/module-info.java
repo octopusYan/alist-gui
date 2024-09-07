@@ -21,4 +21,6 @@ module cn.octopusyan.alistgui {
     opens cn.octopusyan.alistgui to javafx.fxml;
     opens cn.octopusyan.alistgui.model to com.fasterxml.jackson.databind;
     opens cn.octopusyan.alistgui.controller to javafx.fxml;
+    opens cn.octopusyan.alistgui.base to com.fasterxml.jackson.databind;
+    opens cn.octopusyan.alistgui.model.upgrade to com.fasterxml.jackson.databind;
 }
