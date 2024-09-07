@@ -132,10 +132,13 @@ public class ConfigManager {
     public static void proxySetup(ProxySetup setup) {
         guiConfig.setProxySetup(setup.getName());
 
-        if (ProxySetup.NO_PROXY.equals(setup)) {
-            HttpUtil.getInstance().clearProxy();
-        } else if (hasProxy()) {
-            HttpUtil.getInstance().proxy(setup, ConfigManager.getProxyInfo());
+        switch (setup) {
+            case NO_PROXY -> HttpUtil.getInstance().clearProxy();
+            case SYSTEM, MANUAL -> {
+                if (ProxySetup.MANUAL.equals(setup) && !hasProxy())
+                    return;
+                HttpUtil.getInstance().proxy(setup, ConfigManager.getProxyInfo());
+            }
         }
     }
 

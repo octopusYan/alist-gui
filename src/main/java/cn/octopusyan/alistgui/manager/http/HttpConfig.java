@@ -27,6 +27,10 @@ import java.util.concurrent.Executor;
 @Data
 public class HttpConfig {
     private static final Logger logger = LoggerFactory.getLogger(HttpConfig.class);
+    static {
+        // 使用系统默认代理
+        System.setProperty("java.net.useSystemProxies", "true");
+    }
     /**
      * http版本
      */
@@ -86,12 +90,12 @@ public class HttpConfig {
             }
 
             @Override
-            public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+            public void checkClientTrusted(X509Certificate[] arg0, String arg1) {
                 // TODO Auto-generated method stub
             }
 
             @Override
-            public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+            public void checkServerTrusted(X509Certificate[] arg0, String arg1) {
                 // TODO Auto-generated method stub
             }
         }};

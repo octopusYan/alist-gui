@@ -57,15 +57,6 @@
             <version>2.0.1</version>
         </dependency>
 
-        <!-- java 网络代理查找库-->
-        <!-- https://github.com/MarkusBernhardt/proxy-vole -->
-        <!-- https://mvnrepository.com/artifact/org.bidib.com.github.markusbernhardt/proxy-vole -->
-        <dependency>
-            <groupId>org.bidib.com.github.markusbernhardt</groupId>
-            <artifactId>proxy-vole</artifactId>
-            <version>1.1.5</version>
-        </dependency>
-
         <!-- slf4j -->
         <!-- https://slf4j.org/manual.html -->
         <dependency>
