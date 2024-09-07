@@ -7,6 +7,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 /config/
+/bin/
 
 ### IntelliJ IDEA ###
 .idea/
