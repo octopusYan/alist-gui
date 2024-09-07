@@ -166,6 +166,9 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
+                <excludes>
+                    <exclude>css/*.scss</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -178,6 +181,14 @@
                     <source>21</source>
                     <target>21</target>
                     <compilerArgs>--enable-preview</compilerArgs>
+                    <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -189,7 +200,6 @@
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>exe</nonFilteredFileExtension>
                         <nonFilteredFileExtension>dll</nonFilteredFileExtension>
-                        <filteredFileExtension>scss</filteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
