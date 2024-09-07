@@ -5,7 +5,7 @@ package cn.octopusyan.alistgui;
  *
  * @author octopus_yan@foxmail.com
  */
-public class AppLuncher {
+public class AppLauncher {
 
     public static void main(String[] args) {
         Application.launch(Application.class, args);
