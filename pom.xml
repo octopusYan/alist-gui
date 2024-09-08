@@ -25,6 +25,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <exec.mainClass>cn.octopusyan.alistgui.AppLauncher</exec.mainClass>
+        <cssSrcPath>${project.basedir}/src/main/resources/css</cssSrcPath>
+        <cssTargetPath>${project.basedir}/target/classes/css</cssTargetPath>
 
         <junit.version>5.10.0</junit.version>
         <javafx.version>21.0.4</javafx.version>
@@ -198,18 +200,11 @@
                 <configuration>
                     <sassVersion>1.78.0</sassVersion>
                     <args> <!-- Any argument that should be forwarded to the sass cli -->
-                        <arg>
-                            ${project.basedir}/src/main/resources/css/root.scss:${project.basedir}/target/classes/css/root.css
-                        </arg>
-                        <arg>
-                            ${project.basedir}/src/main/resources/css/root-view.scss:${project.basedir}/target/classes/css/root-view.css
-                        </arg>
-                        <arg>
-                            ${project.basedir}/src/main/resources/css/main-view.scss:${project.basedir}/target/classes/css/main-view.css
-                        </arg>
-                        <arg>
-                            ${project.basedir}/src/main/resources/css/setup-view.scss:${project.basedir}/target/classes/css/setup-view.css
-                        </arg>
+                        <arg>${cssSrcPath}/root.scss:${cssTargetPath}/root.css</arg>
+                        <arg>${cssSrcPath}/root-view.scss:${cssTargetPath}/root-view.css</arg>
+                        <arg>${cssSrcPath}/main-view.scss:${cssTargetPath}/main-view.css</arg>
+                        <arg>${cssSrcPath}/setup-view.scss:${cssTargetPath}/setup-view.css</arg>
+                        <arg>${cssSrcPath}/about-view.scss:${cssTargetPath}/about-view.css</arg>
                         <arg>--no-source-map</arg>
                     </args>
                 </configuration>
