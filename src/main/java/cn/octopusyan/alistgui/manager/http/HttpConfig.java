@@ -15,7 +15,6 @@ import java.net.http.HttpClient;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Executor;
 
@@ -27,10 +26,12 @@ import java.util.concurrent.Executor;
 @Data
 public class HttpConfig {
     private static final Logger logger = LoggerFactory.getLogger(HttpConfig.class);
+
     static {
         // 使用系统默认代理
         System.setProperty("java.net.useSystemProxies", "true");
     }
+
     /**
      * http版本
      */
