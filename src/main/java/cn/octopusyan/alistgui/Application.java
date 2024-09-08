@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
+import java.net.http.HttpClient;
 import java.util.Objects;
 
 public class Application extends javafx.application.Application {
@@ -36,18 +37,17 @@ public class Application extends javafx.application.Application {
         // http请求工具初始化
         HttpConfig httpConfig = new HttpConfig();
         // 加载代理设置
-        if (!ProxySetup.NO_PROXY.equals(ConfigManager.proxySetup())) {
-            // 系统代理
-            if (ProxySetup.SYSTEM.equals(ConfigManager.proxySetup())) {
-                httpConfig.setProxySelector(ProxySelector.getDefault());
-            }
-            // 自定义代理
-            if (ProxySetup.MANUAL.equals(ConfigManager.proxySetup()) && ConfigManager.hasProxy()) {
-                InetSocketAddress unresolved = InetSocketAddress.createUnresolved(
-                        Objects.requireNonNull(ConfigManager.proxyHost()),
-                        ConfigManager.getProxyPort()
-                );
-                httpConfig.setProxySelector(ProxySelector.of(unresolved));
+        switch (ConfigManager.proxySetup()) {
+            case NO_PROXY -> httpConfig.setProxySelector(HttpClient.Builder.NO_PROXY);
+            case SYSTEM -> httpConfig.setProxySelector(ProxySelector.getDefault());
+            case MANUAL -> {
+                if(ConfigManager.hasProxy()) {
+                    InetSocketAddress unresolved = InetSocketAddress.createUnresolved(
+                            Objects.requireNonNull(ConfigManager.proxyHost()),
+                            ConfigManager.getProxyPort()
+                    );
+                    httpConfig.setProxySelector(ProxySelector.of(unresolved));
+                }
             }
         }
         httpConfig.setConnectTimeout(10);
