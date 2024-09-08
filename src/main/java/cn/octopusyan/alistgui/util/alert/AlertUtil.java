@@ -116,6 +116,12 @@ public class AlertUtil {
         return new TextInputBuilder(dialog, mOwner);
     }
 
+    public static TextInputBuilder input(String content, String defaultResult) {
+        TextInputDialog dialog = new TextInputDialog(defaultResult);
+        dialog.setContentText(content);
+        return new TextInputBuilder(dialog, mOwner);
+    }
+
     @SafeVarargs
     public static <T> ChoiceBuilder<T> choices(String hintText, T... choices) {
         ChoiceDialog<T> dialog = new ChoiceDialog<>(choices[0], choices);

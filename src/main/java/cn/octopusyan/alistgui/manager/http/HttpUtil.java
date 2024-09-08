@@ -4,8 +4,6 @@ import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
-//import com.github.markusbernhardt.proxy.ProxySearch;
-//import com.github.markusbernhardt.proxy.selector.misc.BufferedProxySelector;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

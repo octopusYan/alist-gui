@@ -3,7 +3,6 @@ package cn.octopusyan.alistgui;
 import atlantafx.base.theme.PrimerLight;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
-import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.http.HttpConfig;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
@@ -41,7 +40,7 @@ public class Application extends javafx.application.Application {
             case NO_PROXY -> httpConfig.setProxySelector(HttpClient.Builder.NO_PROXY);
             case SYSTEM -> httpConfig.setProxySelector(ProxySelector.getDefault());
             case MANUAL -> {
-                if(ConfigManager.hasProxy()) {
+                if (ConfigManager.hasProxy()) {
                     InetSocketAddress unresolved = InetSocketAddress.createUnresolved(
                             Objects.requireNonNull(ConfigManager.proxyHost()),
                             ConfigManager.getProxyPort()
@@ -50,7 +49,7 @@ public class Application extends javafx.application.Application {
                 }
             }
         }
-        httpConfig.setConnectTimeout(10);
+        httpConfig.setConnectTimeout(3000);
         HttpUtil.init(httpConfig);
     }
 

@@ -6,11 +6,13 @@ import javafx.stage.Window;
 import java.util.Optional;
 
 /**
+ * 获取用户输入弹窗
+ *
  * @author octopus_yan
  */
-public class TextInputBuilder extends BaseBuilder<TextInputDialog, String>{
-    public TextInputBuilder(TextInputDialog alert, Window mOwner) {
-        super(alert, mOwner);
+public class TextInputBuilder extends BaseBuilder<TextInputBuilder, TextInputDialog> {
+    public TextInputBuilder(TextInputDialog dialog, Window mOwner) {
+        super(dialog, mOwner);
     }
 
     /**
@@ -18,7 +20,7 @@ public class TextInputBuilder extends BaseBuilder<TextInputDialog, String>{
      * 如果用户点击了取消按钮,将会返回null
      */
     public String getInput() {
-        Optional<String> result = alert.showAndWait();
+        Optional<String> result = dialog.showAndWait();
         return result.orElse(null);
     }
 }
