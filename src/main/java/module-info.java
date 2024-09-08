@@ -10,6 +10,7 @@ module cn.octopusyan.alistgui {
     requires ch.qos.logback.classic;
     requires cn.hutool.core;
     requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.fontawesome;
     requires com.gluonhq.emoji;
     requires static lombok;
     requires com.fasterxml.jackson.databind;
