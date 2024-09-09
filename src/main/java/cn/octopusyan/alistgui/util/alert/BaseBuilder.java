@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author octopus_yan
  */
 public abstract class BaseBuilder<T extends BaseBuilder<T, ?>, D extends Dialog<?>> {
-    D dialog;
+    protected D dialog;
 
     public BaseBuilder(D dialog, Window mOwner) {
         this.dialog = dialog;
@@ -49,12 +49,17 @@ public abstract class BaseBuilder<T extends BaseBuilder<T, ?>, D extends Dialog<
         return (T) this;
     }
 
+    public D getDialog() {
+        return dialog;
+    }
+
     public void show() {
-        if (dialog.isShowing()) {
-            if (!Objects.equals(dialog.getContentText(), dialog.getContentText()))
-                dialog.setOnHidden(_ -> show());
-        }
         dialog.showAndWait();
+    }
+
+    public void close() {
+        if(dialog.isShowing())
+            dialog.close();
     }
 
     private Stage getStage() {

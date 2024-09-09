@@ -10,6 +10,12 @@ import java.util.Optional;
  * @author octopus_yan
  */
 public class ChoiceBuilder<R> extends BaseBuilder<ChoiceBuilder<R>, ChoiceDialog<R>> {
+
+    @SafeVarargs
+    public ChoiceBuilder(Window mOwner, R... choices) {
+        this(new ChoiceDialog<>(choices[0], choices), mOwner);
+    }
+
     public ChoiceBuilder(ChoiceDialog<R> dialog, Window mOwner) {
         super(dialog, mOwner);
     }
@@ -17,7 +23,7 @@ public class ChoiceBuilder<R> extends BaseBuilder<ChoiceBuilder<R>, ChoiceDialog
     /**
      * AlertUtil.choices
      */
-    public R getChoice(Collection<R> choices) {
+    public R showAndGetChoice() {
         Optional<R> result = dialog.showAndWait();
         return result.orElse(null);
     }

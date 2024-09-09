@@ -11,6 +11,15 @@ import java.util.Optional;
  * @author octopus_yan
  */
 public class TextInputBuilder extends BaseBuilder<TextInputBuilder, TextInputDialog> {
+
+    public TextInputBuilder(Window mOwner) {
+        this(new TextInputDialog(), mOwner);
+    }
+
+    public TextInputBuilder(Window mOwner, String defaultResult) {
+        this(new TextInputDialog(defaultResult), mOwner);
+    }
+
     public TextInputBuilder(TextInputDialog dialog, Window mOwner) {
         super(dialog, mOwner);
     }
