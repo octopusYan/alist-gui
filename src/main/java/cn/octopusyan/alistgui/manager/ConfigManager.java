@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
 public class ConfigManager {
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
     public static ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-    public static final Locale DEFAULT_LANGUAGE = Locale.CHINESE;
+    public static final Locale DEFAULT_LANGUAGE = Locale.SIMPLIFIED_CHINESE;
     private static GuiConfig guiConfig;
     private static UpgradeConfig upgradeConfig;
 
@@ -69,7 +69,7 @@ public class ConfigManager {
                 && Integer.parseInt(proxyInfo.getPort()) > 0;
     }
 
-    private static ProxyInfo getProxyInfo() {
+    public static ProxyInfo getProxyInfo() {
         return guiConfig.getProxyInfo();
     }
 
@@ -127,6 +127,14 @@ public class ConfigManager {
 
     public static ProxySetup proxySetup() {
         return ProxySetup.valueOf(StringUtils.upperCase(guiConfig.getProxySetup()));
+    }
+
+    public static void proxyTestUrl(String url) {
+        guiConfig.setProxyTestUrl(url);
+    }
+
+    public static String proxyTestUrl() {
+        return guiConfig.getProxyTestUrl();
     }
 
     public static void proxySetup(ProxySetup setup) {

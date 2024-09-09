@@ -23,23 +23,5 @@
     -fx-text-fill: #2c69e0;
     -fx-text-alignment: CENTER;
   }
-
-  .shield {
-
-    .label {
-      -fx-text-fill: white;
-      -fx-label-padding: 3 5 3 5;
-    }
-
-    .shield-name {
-      -fx-background-color: #555555;
-      -fx-background-radius: 5 0 0 5;
-    }
-
-    .shield-version {
-      -fx-background-color: #6969AA;
-      -fx-background-radius: 0 5 5 0;
-    }
-  }
 }
 

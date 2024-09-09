@@ -1,6 +1,7 @@
 package cn.octopusyan.alistgui.config;
 
 import cn.octopusyan.alistgui.base.BaseController;
+import cn.octopusyan.alistgui.controller.AboutController;
 import cn.octopusyan.alistgui.controller.MainController;
 import cn.octopusyan.alistgui.controller.RootController;
 import cn.octopusyan.alistgui.controller.SetupController;
@@ -34,7 +35,7 @@ public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static Scene scene;
     private static final IntegerProperty currentViewIndexProperty = new SimpleIntegerProperty(0);
-    // 获取控制器集合
+
     /**
      * 控制器集合
      */
@@ -51,7 +52,7 @@ public class Context {
     /**
      * 支持的语言集合，应与语言资源文件同步手动更新
      */
-    public static final List<Locale> SUPPORT_LANGUAGE_LIST = Arrays.asList(Locale.CHINESE, Locale.ENGLISH);
+    public static final List<Locale> SUPPORT_LANGUAGE_LIST = Arrays.asList(Locale.SIMPLIFIED_CHINESE, Locale.ENGLISH);
     /**
      * 记录当前所选时区
      */
@@ -70,6 +71,7 @@ public class Context {
                     case RootController root -> root;
                     case MainController main -> main;
                     case SetupController setup -> setup;
+                    case AboutController about -> about;
                     default -> throw new IllegalStateException(STR."Unexpected value: \{type}");
                 };
             } catch (Exception e) {
@@ -107,6 +109,7 @@ public class Context {
     // 更新界面语言
     public static void setLanguage(Locale locale) {
         setCurrentLocale(locale);
+        Locale.setDefault(locale);
         ConfigManager.language(locale);
         LANGUAGE_RESOURCE_FACTORY.setResourceBundle(ResourceBundle.getBundle(LANGUAGE_RESOURCE_NAME, locale));
     }
@@ -133,7 +136,7 @@ public class Context {
      * 初始化 语言
      */
     private static void initI18n() {
-        currentLocaleProperty().addListener((_, _, _) -> Platform.runLater(() -> {
+        currentLocaleProperty().addListener((_, _, locale) -> Platform.runLater(() -> {
             try {
                 loadScene();
             } catch (IOException e) {

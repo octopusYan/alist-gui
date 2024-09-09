@@ -2,6 +2,7 @@ package cn.octopusyan.alistgui.base;
 
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.manager.WindowsUtil;
 import cn.octopusyan.alistgui.util.FxmlUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,7 +21,6 @@ import java.util.ResourceBundle;
  */
 public abstract class BaseController<P extends Pane> implements Initializable {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private double xOffSet = 0, yOffSet = 0;
 
     public BaseController() {
         //初始化时保存当前Controller实例
@@ -33,14 +33,7 @@ public abstract class BaseController<P extends Pane> implements Initializable {
         // 全局窗口拖拽
         if (dragWindow()) {
             // 窗口拖拽
-            getRootPanel().setOnMousePressed(event -> {
-                xOffSet = event.getSceneX();
-                yOffSet = event.getSceneY();
-            });
-            getRootPanel().setOnMouseDragged(event -> {
-                getWindow().setX(event.getScreenX() - xOffSet);
-                getWindow().setY(event.getScreenY() - yOffSet);
-            });
+            WindowsUtil.bindDragged(getRootPanel());
         }
 
         // 初始化数据

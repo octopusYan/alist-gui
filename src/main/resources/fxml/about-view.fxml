@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="aboutView" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      prefHeight="700" prefWidth="720" spacing="30" alignment="CENTER"
+      stylesheets="@../css/about-view.css"
+      fx:controller="cn.octopusyan.alistgui.controller.AboutController">
+
+    <StackPane>
+        <padding>
+            <Insets bottom="10"/>
+        </padding>
+        <ImageView pickOnBounds="true" preserveRatio="true">
+            <Image url="@../assets/logo-about.png" backgroundLoading="true"/>
+        </ImageView>
+    </StackPane>
+
+    <HBox alignment="CENTER" styleClass="shield">
+        <Label styleClass="shield-name" text="%about.alist.version"/>
+        <Label fx:id="aListVersion" styleClass="shield-version"/>
+    </HBox>
+    <HBox alignment="CENTER" styleClass="shield">
+        <Label styleClass="shield-name" text="%about.app.version"/>
+        <Label styleClass="shield-version" text="v${project.version}"/>
+    </HBox>
+    <Button fx:id="checkAppVersion" text="%about.app.update"/>
+    <Button fx:id="checkAListVersion" onAction="#checkAListUpdate" text="%about.alist.update"/>
+</VBox>

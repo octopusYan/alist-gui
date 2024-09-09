@@ -8,25 +8,29 @@ import cn.octopusyan.alistgui.viewModel.SetupViewModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 /**
  * 设置页面控制器
  *
  * @author octopus_yan
  */
-public class SetupController extends BaseController<AnchorPane> implements Initializable {
+public class SetupController extends BaseController<VBox> implements Initializable {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @FXML
-    public AnchorPane setupView;
+    public VBox setupView;
     @FXML
     public CheckBox autoStartCheckBox;
     @FXML
@@ -43,15 +47,11 @@ public class SetupController extends BaseController<AnchorPane> implements Initi
     public TextField proxyHost;
     @FXML
     public TextField proxyPort;
-    @FXML
-    public Label aListVersion;
-    @FXML
-    public Button checkAppVersion;
 
-    private final SetupViewModel setupViewModel = new SetupViewModel();
+    private final SetupViewModel viewModule = new SetupViewModel();
 
     @Override
-    public AnchorPane getRootPanel() {
+    public VBox getRootPanel() {
         return setupView;
     }
 
@@ -75,21 +75,19 @@ public class SetupController extends BaseController<AnchorPane> implements Initi
 
     @Override
     public void initViewAction() {
-        autoStartCheckBox.selectedProperty().bindBidirectional(setupViewModel.autoStartProperty());
-        silentStartupCheckBox.selectedProperty().bindBidirectional(setupViewModel.silentStartupProperty());
-        proxySetupComboBox.getSelectionModel().selectedItemProperty()
-                .addListener((_, _, newValue) -> setupViewModel.proxySetupProperty().set(newValue));
-        proxyHost.textProperty().bindBidirectional(setupViewModel.proxyHostProperty());
-        proxyPort.textProperty().bindBidirectional(setupViewModel.proxyPortProperty());
-        languageComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
-            setupViewModel.languageProperty().set(newValue);
-            logger.info("language changed to {}", newValue);
+        autoStartCheckBox.selectedProperty().bindBidirectional(viewModule.autoStartProperty());
+        silentStartupCheckBox.selectedProperty().bindBidirectional(viewModule.silentStartupProperty());
+        proxySetupComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> viewModule.proxySetupProperty().set(newValue));
+        proxyHost.textProperty().bindBidirectional(viewModule.proxyHostProperty());
+        proxyPort.textProperty().bindBidirectional(viewModule.proxyPortProperty());
+        languageComboBox.getSelectionModel().selectedItemProperty().subscribe(locale -> {
+            viewModule.languageProperty().set(locale);
+            logger.info("language changed to {}", locale);
         });
-        aListVersion.textProperty().bindBidirectional(setupViewModel.aListVersionProperty());
     }
 
     @FXML
-    public void checkAListUpdate() {
-        setupViewModel.checkAListUpdate();
+    public void proxyTest() {
+        viewModule.proxyTest();
     }
 }

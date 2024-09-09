@@ -6,7 +6,7 @@ import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.model.UpgradeConfig;
 import cn.octopusyan.alistgui.model.upgrade.UpgradeApp;
 import cn.octopusyan.alistgui.util.JsonUtil;
-import cn.octopusyan.alistgui.viewModel.SetupViewModel;
+import cn.octopusyan.alistgui.viewModel.AboutViewModule;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 
@@ -16,10 +16,10 @@ import org.apache.commons.lang3.StringUtils;
  * @author octopus_yan
  */
 public class UpgradeTask extends BaseTask {
-    private final SetupViewModel vm;
+    private final AboutViewModule vm;
     private final UpgradeApp app;
 
-    public UpgradeTask(SetupViewModel viewModel, UpgradeApp app) {
+    public UpgradeTask(AboutViewModule viewModel, UpgradeApp app) {
         this.vm = viewModel;
         this.app = app;
     }

@@ -37,6 +37,13 @@
             <!-- 引入设置页 -->
             <fx:include fx:id="setupController" source="setup-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
         </Tab>
+        <Tab text="%root.tab.about">
+            <graphic>
+                <FontIcon iconColor="white" iconLiteral="fa-info-circle"/>
+            </graphic>
+            <!-- 引入关于页 -->
+            <fx:include fx:id="aboutController" source="about-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
+        </Tab>
     </TabPane>
     <HBox fx:id="windowFooter" alignment="CENTER" prefWidth="Infinity" spacing="25.0">
         <padding>
