@@ -1,6 +1,7 @@
 package cn.octopusyan.alistgui.util.alert;
 
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.manager.WindowsUtil;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,6 +9,8 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 /**
@@ -24,17 +27,22 @@ public class ProgressBuilder extends BaseBuilder<ProgressBuilder, Dialog<Void>> 
     public ProgressBuilder(Dialog<Void> dialog, Window mOwner) {
         super(dialog, mOwner);
 
+        DialogPane dialogPane = dialog.getDialogPane();
+        dialogPane.getScene().setFill(Color.TRANSPARENT);
+        WindowsUtil.bindDragged(dialogPane);
+        WindowsUtil.bindShadow(dialogPane);
+        WindowsUtil.getStage(dialogPane).initStyle(StageStyle.TRANSPARENT);
         var content = getContent();
 
-        DialogPane pane = dialog.getDialogPane();
-        pane.setContent(content);
-        pane.getButtonTypes().add(new ButtonType(
+        dialogPane.setContent(content);
+        dialogPane.getButtonTypes().add(new ButtonType(
                 Context.getLanguageBinding("label.cancel").get(),
                 ButtonType.CANCEL.getButtonData()
         ));
-        for (Node child : pane.getChildren()) {
-            if (child instanceof ButtonBar bar) {
-                pane.getChildren().remove(child);
+
+        for (Node child : dialogPane.getChildren()) {
+            if (child instanceof ButtonBar) {
+                dialogPane.getChildren().remove(child);
                 break;
             }
         }

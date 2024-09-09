@@ -8,7 +8,7 @@
   }
 
   .proxy-panel {
-    -fx-background-color: #e9e9e9;
+    -fx-background-color: -color-neutral-muted;
     -fx-background-radius: 15;
     -fx-border-radius: 15;
     -fx-border-width: 5;
@@ -20,7 +20,7 @@
 
   .proxy-label {
     -fx-font-size: 15;
-    -fx-text-fill: #2c69e0;
+    -fx-text-fill: -color-accent-5;
     -fx-text-alignment: CENTER;
   }
 }
