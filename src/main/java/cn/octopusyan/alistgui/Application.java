@@ -9,6 +9,7 @@ import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
 import cn.octopusyan.alistgui.util.alert.AlertUtil;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.Getter;
@@ -73,6 +74,7 @@ public class Application extends javafx.application.Application {
         Application.setUserAgentStylesheet(ConfigManager.theme().getUserAgentStylesheet());
 
         // 启动主界面
+        primaryStage.getIcons().add(new Image(Objects.requireNonNull(this.getClass().getResourceAsStream("/assets/logo.png"))));
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         primaryStage.setTitle(String.format("%s v%s", Constants.APP_TITLE, Constants.APP_VERSION));
         Scene scene = Context.initScene();
