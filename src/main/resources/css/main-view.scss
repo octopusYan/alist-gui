@@ -8,42 +8,52 @@
 
 #statusLabel {
   -fx-padding: 2 5 2 5;
-  -fx-text-fill: white;
   -fx-font-size: 15;
-  -fx-background-color: -color-success-3;
   -fx-background-radius: 10;
   -fx-text-alignment: CENTER;
   -fx-border-radius: 10;
+  -color-button-bg: -color-success-3;
+  -color-button-border: -color-button-bg;
+  -color-button-border-hover: -color-button-bg;
+  -color-button-bg-hover: -color-button-bg;
 }
 
-.control-menu {
+.control-menu, #startButton, #passwordButton, #restartButton, #moreButton {
   -fx-font-size: 15;
   -fx-background-radius: 15;
   -fx-padding: 10 40 10 40;
   -fx-border-radius: 15;
   -fx-border-width: 2;
-  -fx-opacity: 1;
-
-  &:hover {
-    -fx-opacity: 0.9;
-  }
 }
 
 #startButton {
-  -fx-background-color: -color-danger-emphasis;
-  -fx-border-color: -color-danger-emphasis;
-  -fx-text-fill: white;
+  -color-button-bg: -color-danger-4;
+  -color-button-bg-hover: -color-button-bg;
+  -color-button-bg-focused: -color-button-bg;
+  -color-button-bg-pressed: -color-button-bg;
+  -color-button-border: -color-button-bg;
+  -color-button-border-hover: -color-button-bg;
+  -fx-border-color: -color-button-bg;
 }
 
 #passwordButton {
-  -fx-background-color: -color-success-3;
-  -fx-border-color: -color-success-3;
+  -color-button-bg: -color-success-3;
+  -color-button-bg-hover: -color-button-bg;
+  -color-button-bg-focused: -color-button-bg;
+  -color-button-bg-pressed: -color-button-bg;
+  -color-button-border: -color-button-bg;
+  -color-button-border-hover: -color-button-bg;
+  -fx-border-color: -color-button-bg;
 }
 
 #restartButton {
-  -fx-background-color: linear-gradient(to bottom right, -color-accent-3, -color-chart-6);
-  -fx-border-color: linear-gradient(to bottom right, -color-accent-3, -color-chart-6);
-  -fx-text-fill: white;
+  -color-button-bg: linear-gradient(to bottom right, -color-accent-3, -color-chart-6);
+  -color-button-bg-hover: -color-button-bg;
+  -color-button-bg-focused: -color-button-bg;
+  -color-button-bg-pressed: -color-button-bg;
+  -color-button-border: -color-button-bg;
+  -color-button-border-hover: -color-button-bg;
+  -fx-border-color: -color-button-bg;
 }
 
 #moreButton {
@@ -52,17 +62,11 @@
   -fx-border-color: -color-chart-6;
 }
 
-#logArea {
+.logArea {
   -fx-font-family: "Lucida Console";
-  -fx-font-size: 20;
+  -fx-font-size: 15;
   -fx-background-radius: 15;
   -fx-border-radius: 15;
-  -fx-background-insets: 0;
-
-  .content {
-    -fx-padding: 0 15 0 15;
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
-  }
-
+  -fx-padding: 5 15 5 15;
+  -fx-background-color: -color-neutral-muted;
 }

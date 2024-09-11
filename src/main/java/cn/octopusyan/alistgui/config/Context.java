@@ -6,6 +6,7 @@ import cn.octopusyan.alistgui.controller.MainController;
 import cn.octopusyan.alistgui.controller.RootController;
 import cn.octopusyan.alistgui.controller.SetupController;
 import cn.octopusyan.alistgui.manager.ConfigManager;
+import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.util.FxmlUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
@@ -112,6 +113,10 @@ public class Context {
         Locale.setDefault(locale);
         ConfigManager.language(locale);
         LANGUAGE_RESOURCE_FACTORY.setResourceBundle(ResourceBundle.getBundle(LANGUAGE_RESOURCE_NAME, locale));
+
+        log.info("language changed to {}", locale);
+        if (ConsoleLog.isInit())
+            ConsoleLog.info(STR."language changed to \{locale}");
     }
 
     /**

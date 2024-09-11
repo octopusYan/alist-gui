@@ -1,7 +1,9 @@
 package cn.octopusyan.alistgui.controller;
 
 import cn.octopusyan.alistgui.base.BaseController;
+import cn.octopusyan.alistgui.manager.ConsoleLog;
 import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,10 @@ public class MainController extends BaseController<VBox> {
 
     @FXML
     public VBox mainView;
+    @FXML
+    public VBox logArea;
+    @FXML
+    public ScrollPane logAreaSp;
 
     @Override
     public VBox getRootPanel() {
@@ -24,7 +30,7 @@ public class MainController extends BaseController<VBox> {
 
     @Override
     public void initData() {
-
+        ConsoleLog.init(logAreaSp, logArea);
     }
 
     @Override
