@@ -13,6 +13,10 @@
     <CheckBox fx:id="autoStartCheckBox" text="%setup.auto-start.label"/>
     <CheckBox fx:id="silentStartupCheckBox" text="%setup.silent-startup.label"/>
     <HBox alignment="CENTER_LEFT" spacing="10">
+        <Label text="%setup.theme"/>
+        <ComboBox fx:id="themeComboBox"/>
+    </HBox>
+    <HBox alignment="CENTER_LEFT" spacing="10">
         <Label text="%setup.language"/>
         <ComboBox fx:id="languageComboBox"/>
     </HBox>

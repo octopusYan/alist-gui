@@ -1,8 +1,10 @@
 package cn.octopusyan.alistgui.manager;
 
+import atlantafx.base.theme.*;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.PatternPool;
 import cn.hutool.core.util.NumberUtil;
+import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
@@ -20,6 +22,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -35,6 +39,20 @@ public class ConfigManager {
     public static final Locale DEFAULT_LANGUAGE = Locale.SIMPLIFIED_CHINESE;
     private static GuiConfig guiConfig;
     private static UpgradeConfig upgradeConfig;
+
+    public static final String DEFAULT_THEME = "Primer Light";
+    public static List<Theme> THEME_LIST = Arrays.asList(
+            new PrimerLight(), new PrimerDark(),
+            new NordLight(), new NordDark(),
+            new CupertinoLight(), new CupertinoDark(),
+            new Dracula()
+    );
+    public static List<String> THEME_NAME_LIST = Arrays.asList(
+            "Primer Light", "Primer Dark",
+            "Nord Light", "Nord Dark",
+            "Cupertino Light", "Cupertino Dark",
+            "Dracula"
+    );
 
     static {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -57,6 +75,24 @@ public class ConfigManager {
             logger.error(String.format("load %s error", clazz.getSimpleName()), e);
         }
         return null;
+    }
+
+// --------------------------------{ 主题 }------------------------------------------
+
+    public static String themeName() {
+        return guiConfig.getTheme();
+    }
+
+    public static Theme theme() {
+        return THEME_LIST.get(THEME_NAME_LIST.indexOf(themeName()));
+    }
+
+    public static void themeName(String themeName) {
+        int themeIndex = THEME_NAME_LIST.indexOf(themeName);
+        if (themeIndex < 0) return;
+
+        guiConfig.setTheme(themeName);
+        Application.setUserAgentStylesheet(theme().getUserAgentStylesheet());
     }
 
     public static boolean hasProxy() {

@@ -20,5 +20,6 @@ public class GuiConfig {
     private ProxyInfo proxyInfo;
     private String proxySetup = ProxySetup.NO_PROXY.getName();
     private String language = ConfigManager.DEFAULT_LANGUAGE.toString();
+    private String theme = ConfigManager.DEFAULT_THEME;
     private String proxyTestUrl = "http://";
 }

@@ -1,6 +1,5 @@
 package cn.octopusyan.alistgui;
 
-import atlantafx.base.theme.PrimerLight;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.manager.ConfigManager;
@@ -71,7 +70,7 @@ public class Application extends javafx.application.Application {
         Context.setLanguage(ConfigManager.language());
 
         // 主题样式
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(ConfigManager.theme().getUserAgentStylesheet());
 
         // 启动主界面
         primaryStage.initStyle(StageStyle.TRANSPARENT);

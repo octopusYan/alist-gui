@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Consumer;
 
 /**
  * 设置页面控制器
@@ -37,6 +36,8 @@ public class SetupController extends BaseController<VBox> implements Initializab
     public CheckBox silentStartupCheckBox;
     @FXML
     public ComboBox<Locale> languageComboBox;
+    @FXML
+    public ComboBox<String> themeComboBox;
     @FXML
     public ComboBox<ProxySetup> proxySetupComboBox;
     @FXML
@@ -58,8 +59,8 @@ public class SetupController extends BaseController<VBox> implements Initializab
     @Override
     public void initData() {
         languageComboBox.setItems(FXCollections.observableList(Context.SUPPORT_LANGUAGE_LIST));
+        themeComboBox.setItems(FXCollections.observableList(ConfigManager.THEME_NAME_LIST));
         proxySetupComboBox.setItems(FXCollections.observableList(List.of(ProxySetup.values())));
-
     }
 
     @Override
@@ -70,6 +71,7 @@ public class SetupController extends BaseController<VBox> implements Initializab
         });
 
         languageComboBox.getSelectionModel().select(ConfigManager.language());
+        themeComboBox.getSelectionModel().select(ConfigManager.themeName());
         proxySetupComboBox.getSelectionModel().select(ConfigManager.proxySetup());
     }
 
@@ -77,13 +79,14 @@ public class SetupController extends BaseController<VBox> implements Initializab
     public void initViewAction() {
         autoStartCheckBox.selectedProperty().bindBidirectional(viewModule.autoStartProperty());
         silentStartupCheckBox.selectedProperty().bindBidirectional(viewModule.silentStartupProperty());
-        proxySetupComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> viewModule.proxySetupProperty().set(newValue));
+        languageComboBox.getSelectionModel().selectedItemProperty()
+                .subscribe(locale -> viewModule.languageProperty().set(locale));
+        themeComboBox.getSelectionModel().selectedItemProperty()
+                .subscribe(theme -> viewModule.themeProperty().set(theme));
+        proxySetupComboBox.getSelectionModel().selectedItemProperty()
+                .subscribe((setup) -> viewModule.proxySetupProperty().set(setup));
         proxyHost.textProperty().bindBidirectional(viewModule.proxyHostProperty());
         proxyPort.textProperty().bindBidirectional(viewModule.proxyPortProperty());
-        languageComboBox.getSelectionModel().selectedItemProperty().subscribe(locale -> {
-            viewModule.languageProperty().set(locale);
-            logger.info("language changed to {}", locale);
-        });
     }
 
     @FXML
