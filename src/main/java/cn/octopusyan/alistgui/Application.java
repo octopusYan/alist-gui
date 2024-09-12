@@ -6,6 +6,7 @@ import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.http.HttpConfig;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
+import cn.octopusyan.alistgui.util.ProcessesUtil;
 import cn.octopusyan.alistgui.util.alert.AlertUtil;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -92,6 +93,8 @@ public class Application extends javafx.application.Application {
     @Override
     public void stop() {
         logger.info("application stop ...");
+        // 关闭所有命令
+        ProcessesUtil.destroyAll();
         // 保存应用数据
         ConfigManager.save();
         // 停止所有线程

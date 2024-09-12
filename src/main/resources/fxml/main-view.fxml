@@ -24,10 +24,12 @@
         <VBox.margin>
             <Insets bottom="10.0" top="10.0"/>
         </VBox.margin>
-        <Button fx:id="startButton" styleClass="control-menu, danger" text="%main.control.start"/>
-        <Button fx:id="passwordButton" styleClass="control-menu, success" text="%main.control.password"/>
-        <Button fx:id="restartButton" styleClass="control-menu, success" text="%main.control.restart"/>
-        <Button fx:id="moreButton" styleClass="control-menu" text="%main.control.more"/>
+        <Button fx:id="startButton" styleClass="large, control-menu, success" onAction="#start"
+                text="%main.control.start"/>
+        <Button fx:id="passwordButton" styleClass="large, control-menu, success" text="%main.control.password"/>
+        <Button fx:id="restartButton" styleClass="large, control-menu, success" onAction="#restart"
+                text="%main.control.restart"/>
+        <Button fx:id="moreButton" styleClass="large, control-menu, button-outlined" text="%main.control.more"/>
     </HBox>
     <ScrollPane fx:id="logAreaSp" fitToWidth="true" prefHeight="499.0" prefWidth="Infinity"
                 styleClass="logArea" VBox.vgrow="ALWAYS">

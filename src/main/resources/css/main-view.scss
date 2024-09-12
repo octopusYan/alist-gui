@@ -12,10 +12,6 @@
   -fx-background-radius: 10;
   -fx-text-alignment: CENTER;
   -fx-border-radius: 10;
-  -color-button-bg: -color-success-3;
-  -color-button-border: -color-button-bg;
-  -color-button-border-hover: -color-button-bg;
-  -color-button-bg-hover: -color-button-bg;
 }
 
 .control-menu, #startButton, #passwordButton, #restartButton, #moreButton {
@@ -27,12 +23,6 @@
 }
 
 #startButton {
-  -color-button-bg: -color-danger-4;
-  -color-button-bg-hover: -color-button-bg;
-  -color-button-bg-focused: -color-button-bg;
-  -color-button-bg-pressed: -color-button-bg;
-  -color-button-border: -color-button-bg;
-  -color-button-border-hover: -color-button-bg;
   -fx-border-color: -color-button-bg;
 }
 
@@ -41,8 +31,6 @@
   -color-button-bg-hover: -color-button-bg;
   -color-button-bg-focused: -color-button-bg;
   -color-button-bg-pressed: -color-button-bg;
-  -color-button-border: -color-button-bg;
-  -color-button-border-hover: -color-button-bg;
   -fx-border-color: -color-button-bg;
 }
 
@@ -51,15 +39,16 @@
   -color-button-bg-hover: -color-button-bg;
   -color-button-bg-focused: -color-button-bg;
   -color-button-bg-pressed: -color-button-bg;
-  -color-button-border: -color-button-bg;
-  -color-button-border-hover: -color-button-bg;
   -fx-border-color: -color-button-bg;
 }
 
 #moreButton {
-  -fx-background-color: transparent;
-  -fx-text-fill: -color-chart-6;
+  -color-button-bg-focused: transparent;
+  -color-button-bg-pressed: transparent;
+  -color-button-bg-hover: -color-chart-6-alpha20;
+  -color-button-border: -color-chart-6;
   -fx-border-color: -color-chart-6;
+  -color-button-border-hover: -color-chart-6-alpha70;
 }
 
 .logArea {

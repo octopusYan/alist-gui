@@ -1,44 +1,66 @@
 package cn.octopusyan.alistgui.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 命令工具类
  *
  * @author octopus_yan@foxmail.com
  */
+@Slf4j
 public class ProcessesUtil {
-
-    private static final Logger logger = LoggerFactory.getLogger(ProcessesUtil.class);
     private static final String NEW_LINE = System.lineSeparator();
-    private static final DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler();
 
-    public static boolean exec(String command) {
-        try {
-            exec(command, msg -> {});
-            handler.waitFor();
-        } catch (Exception e) {
-            logger.error("", e);
+    private final Executor executor = DefaultExecutor.builder().get();
+    private final ShutdownHookProcessDestroyer processDestroyer;
+    private DefaultExecuteResultHandler handler;
+    private final PumpStreamHandler streamHandler;
+    private OnExecuteListener listener;
+    private CommandLine commandLine;
+    private final LogOutputStream logout = new LogOutputStream() {
+        @Override
+        protected void processLine(String line, int logLevel) {
+            if (listener != null)
+                listener.onExecute(line + NEW_LINE);
         }
-        return 0 == handler.getExitValue();
+    };
+
+    private static final Set<ProcessesUtil> set = new HashSet<>();
+
+    /**
+     * Prevent construction.
+     */
+    private ProcessesUtil(String workingDirectory) {
+        streamHandler = new PumpStreamHandler(logout, logout);
+        executor.setStreamHandler(streamHandler);
+        executor.setWorkingDirectory(new File(workingDirectory));
+        executor.setExitValue(1);
+        processDestroyer = new ShutdownHookProcessDestroyer();
+        executor.setProcessDestroyer(processDestroyer);
     }
 
-    public static void exec(String command, OnExecuteListener listener) {
-        LogOutputStream logout = new LogOutputStream() {
-            @Override
-            protected void processLine(String line, int logLevel) {
-                if (listener != null) listener.onExecute(line + NEW_LINE);
-            }
-        };
+    public static ProcessesUtil init(String workingDirectory) {
+        ProcessesUtil util = new ProcessesUtil(workingDirectory);
+        set.add(util);
+        return util;
+    }
 
-        CommandLine commandLine = CommandLine.parse(command);
-        DefaultExecutor executor = DefaultExecutor.builder().get();
-        executor.setStreamHandler(new PumpStreamHandler(logout, logout));
-        DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler() {
+    public boolean exec(String command) throws IOException {
+        commandLine = CommandLine.parse(command);
+        int execute = executor.execute(commandLine);
+        return 0 == execute;
+    }
+
+    public void exec(String command, OnExecuteListener listener) {
+        this.listener = listener;
+        commandLine = CommandLine.parse(command);
+        handler = new DefaultExecuteResultHandler() {
             @Override
             public void onProcessComplete(int exitValue) {
                 if (listener != null) {
@@ -60,15 +82,22 @@ public class ProcessesUtil {
         }
     }
 
-    public interface OnExecuteListener {
-        void onExecute(String msg);
-        default void onExecuteSuccess(int exitValue){}
-        default void onExecuteError(Exception e){}
+    public void destroy() {
+        if (processDestroyer.isEmpty()) return;
+        processDestroyer.run();
     }
 
-    /**
-     * Prevent construction.
-     */
-    private ProcessesUtil() {
+    public static void destroyAll() {
+        set.forEach(ProcessesUtil::destroy);
+    }
+
+    public interface OnExecuteListener {
+        void onExecute(String msg);
+
+        default void onExecuteSuccess(int exitValue) {
+        }
+
+        default void onExecuteError(Exception e) {
+        }
     }
 }
