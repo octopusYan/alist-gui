@@ -29,6 +29,11 @@ public class AlertBuilder extends BaseBuilder<AlertBuilder, Alert> {
         return this;
     }
 
+    public AlertBuilder buttons(ButtonType... buttons) {
+        dialog.getButtonTypes().addAll(buttons);
+        return this;
+    }
+
     public AlertBuilder exception(Exception ex) {
         dialog.setTitle("Exception Dialog");
         dialog.setHeaderText(ex.getClass().getSimpleName());
@@ -71,8 +76,9 @@ public class AlertBuilder extends BaseBuilder<AlertBuilder, Alert> {
 
         return Arrays.stream(buttons).map((type) -> {
             ButtonBar.ButtonData buttonData = ButtonBar.ButtonData.OTHER;
-            if ("cancel".equals(StringUtils.lowerCase(type)) || "取消".equals(type))
-                buttonData = ButtonBar.ButtonData.CANCEL_CLOSE;
+            if ("cancel".equals(StringUtils.lowerCase(type)) || "取消".equals(type)) {
+                return ButtonType.CANCEL;
+            }
             return new ButtonType(type, buttonData);
         }).collect(Collectors.toList());
     }

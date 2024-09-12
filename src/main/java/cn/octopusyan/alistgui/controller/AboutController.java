@@ -1,6 +1,7 @@
 package cn.octopusyan.alistgui.controller;
 
 import cn.octopusyan.alistgui.base.BaseController;
+import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.viewModel.AboutViewModule;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -49,6 +50,6 @@ public class AboutController extends BaseController<VBox> {
 
     @FXML
     public void checkAListUpdate() {
-        viewModule.checkAListUpdate();
+        viewModule.checkUpdate(ConfigManager.aList());
     }
 }

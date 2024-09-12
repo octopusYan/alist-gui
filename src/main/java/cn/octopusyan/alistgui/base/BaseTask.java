@@ -9,9 +9,11 @@ import javafx.concurrent.Task;
  */
 public abstract class BaseTask extends Task<Void> {
     private final ThreadPoolManager Executor = ThreadPoolManager.getInstance();
+    protected Listener listener;
 
     @Override
     protected Void call() throws Exception {
+        if (listener != null) listener.onStart();
         task();
         return null;
     }
@@ -23,7 +25,8 @@ public abstract class BaseTask extends Task<Void> {
     protected abstract void task() throws Exception;
 
     public void onListen(Listener listener) {
-        if (listener == null) return;
+        this.listener = listener;
+        if (this.listener == null) return;
 
         setOnRunning(_ -> listener.onRunning());
         setOnCancelled(_ -> listener.onCancelled());
@@ -36,6 +39,9 @@ public abstract class BaseTask extends Task<Void> {
     }
 
     public interface Listener {
+        default void onStart() {
+        }
+
         default void onRunning() {
         }
 

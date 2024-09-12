@@ -53,6 +53,10 @@ public class AlertUtil {
         return confirm().buttons(buttons);
     }
 
+    public static AlertBuilder confirm(ButtonType... buttons) {
+        return confirm().buttons(buttons);
+    }
+
     public static AlertBuilder alert(Alert.AlertType type) {
         return new AlertBuilder(mOwner, type);
     }
@@ -77,7 +81,8 @@ public class AlertUtil {
     public interface OnChoseListener {
         void confirm();
 
-        void cancelOrClose(ButtonType buttonType);
+        default void cancelOrClose(ButtonType buttonType) {
+        }
     }
 
     public interface OnClickListener {

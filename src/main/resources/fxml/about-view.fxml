@@ -29,6 +29,6 @@
         <Label styleClass="shield-name" text="%about.app.version"/>
         <Label styleClass="shield-version" text="v${project.version}"/>
     </HBox>
-    <Button fx:id="checkAppVersion" text="%about.app.update"/>
-    <Button fx:id="checkAListVersion" onAction="#checkAListUpdate" text="%about.alist.update"/>
+    <Button fx:id="checkAppVersion" styleClass="flat" text="%about.app.update"/>
+    <Button fx:id="checkAListVersion" styleClass="flat" onAction="#checkAListUpdate" text="%about.alist.update"/>
 </VBox>

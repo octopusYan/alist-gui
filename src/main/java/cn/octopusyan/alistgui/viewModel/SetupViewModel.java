@@ -1,5 +1,6 @@
 package cn.octopusyan.alistgui.viewModel;
 
+import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.base.BaseTask;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
@@ -22,7 +23,7 @@ import java.util.Locale;
 public class SetupViewModel {
     private final BooleanProperty autoStart = new SimpleBooleanProperty(ConfigManager.autoStart());
     private final BooleanProperty silentStartup = new SimpleBooleanProperty(ConfigManager.silentStartup());
-    private final StringProperty theme = new SimpleStringProperty(ConfigManager.themeName());
+    private final ObjectProperty<Theme> theme = new SimpleObjectProperty<>(ConfigManager.theme());
     private final StringProperty proxyHost = new SimpleStringProperty(ConfigManager.proxyHost());
     private final StringProperty proxyPort = new SimpleStringProperty(ConfigManager.proxyPort());
     private final ObjectProperty<Locale> language = new SimpleObjectProperty<>(ConfigManager.language());
@@ -31,7 +32,8 @@ public class SetupViewModel {
 
 
     public SetupViewModel() {
-        theme.addListener((_, _, newValue) -> ConfigManager.themeName(newValue));
+        theme.bindBidirectional(Context.themeProperty());
+        theme.addListener((_, _, newValue) -> ConfigManager.theme(newValue));
         autoStart.addListener((_, _, newValue) -> ConfigManager.autoStart(newValue));
         silentStartup.addListener((_, _, newValue) -> ConfigManager.silentStartup(newValue));
         proxySetup.addListener((_, _, newValue) -> ConfigManager.proxySetup(newValue));
@@ -41,7 +43,7 @@ public class SetupViewModel {
         language.addListener((_, _, newValue) -> Context.setLanguage(newValue));
     }
 
-    public StringProperty themeProperty() {
+    public ObjectProperty<Theme> themeProperty() {
         return theme;
     }
 

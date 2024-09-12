@@ -1,5 +1,6 @@
 package cn.octopusyan.alistgui.controller;
 
+import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
@@ -14,6 +15,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +39,7 @@ public class SetupController extends BaseController<VBox> implements Initializab
     @FXML
     public ComboBox<Locale> languageComboBox;
     @FXML
-    public ComboBox<String> themeComboBox;
+    public ComboBox<Theme> themeComboBox;
     @FXML
     public ComboBox<ProxySetup> proxySetupComboBox;
     @FXML
@@ -59,8 +61,20 @@ public class SetupController extends BaseController<VBox> implements Initializab
     @Override
     public void initData() {
         languageComboBox.setItems(FXCollections.observableList(Context.SUPPORT_LANGUAGE_LIST));
-        themeComboBox.setItems(FXCollections.observableList(ConfigManager.THEME_NAME_LIST));
+        themeComboBox.setItems(FXCollections.observableList(ConfigManager.THEME_LIST));
         proxySetupComboBox.setItems(FXCollections.observableList(List.of(ProxySetup.values())));
+
+        themeComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Theme object) {
+                return object.getName();
+            }
+
+            @Override
+            public Theme fromString(String string) {
+                return ConfigManager.THEME_MAP.get(string);
+            }
+        });
     }
 
     @Override
@@ -71,7 +85,7 @@ public class SetupController extends BaseController<VBox> implements Initializab
         });
 
         languageComboBox.getSelectionModel().select(ConfigManager.language());
-        themeComboBox.getSelectionModel().select(ConfigManager.themeName());
+        themeComboBox.getSelectionModel().select(ConfigManager.theme());
         proxySetupComboBox.getSelectionModel().select(ConfigManager.proxySetup());
     }
 

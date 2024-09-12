@@ -1,5 +1,6 @@
 package cn.octopusyan.alistgui.config;
 
+import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.controller.AboutController;
 import cn.octopusyan.alistgui.controller.MainController;
@@ -36,6 +37,7 @@ public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static Scene scene;
     private static final IntegerProperty currentViewIndexProperty = new SimpleIntegerProperty(0);
+    private static final ObjectProperty<Theme> theme = new SimpleObjectProperty<>(ConfigManager.theme());
 
     /**
      * 控制器集合
@@ -80,6 +82,10 @@ public class Context {
                 return null;
             }
         };
+    }
+
+    public static ObjectProperty<Theme> themeProperty() {
+        return theme;
     }
 
     // 获取当前所选时区属性

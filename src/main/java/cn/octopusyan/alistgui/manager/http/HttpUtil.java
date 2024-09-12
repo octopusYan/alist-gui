@@ -4,6 +4,7 @@ import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,6 +26,7 @@ import java.util.Optional;
  */
 public class HttpUtil {
     private volatile static HttpUtil util;
+    @Getter
     private volatile HttpClient httpClient;
     private final HttpConfig httpConfig;
 

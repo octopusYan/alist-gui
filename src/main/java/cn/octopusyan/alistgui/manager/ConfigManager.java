@@ -3,6 +3,7 @@ package cn.octopusyan.alistgui.manager;
 import atlantafx.base.theme.*;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.PatternPool;
+import cn.hutool.core.net.NetUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Constants;
@@ -12,6 +13,7 @@ import cn.octopusyan.alistgui.model.GuiConfig;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.model.UpgradeConfig;
 import cn.octopusyan.alistgui.model.upgrade.AList;
+import cn.octopusyan.alistgui.model.upgrade.Gui;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -22,11 +24,14 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 /**
  * 客户端设置
@@ -37,22 +42,17 @@ public class ConfigManager {
     private static final Logger logger = LoggerFactory.getLogger(ConfigManager.class);
     public static ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
     public static final Locale DEFAULT_LANGUAGE = Locale.SIMPLIFIED_CHINESE;
-    private static GuiConfig guiConfig;
-    private static UpgradeConfig upgradeConfig;
-
-    public static final String DEFAULT_THEME = "Primer Light";
-    public static List<Theme> THEME_LIST = Arrays.asList(
+    public static final String DEFAULT_THEME = new PrimerLight().getName();
+    public static List<Theme> THEME_LIST = List.of(
             new PrimerLight(), new PrimerDark(),
             new NordLight(), new NordDark(),
             new CupertinoLight(), new CupertinoDark(),
             new Dracula()
     );
-    public static List<String> THEME_NAME_LIST = Arrays.asList(
-            "Primer Light", "Primer Dark",
-            "Nord Light", "Nord Dark",
-            "Cupertino Light", "Cupertino Dark",
-            "Dracula"
-    );
+    public static Map<String, Theme> THEME_MAP = THEME_LIST.stream()
+            .collect(Collectors.toMap(Theme::getName, Function.identity()));
+
+    private static GuiConfig guiConfig;
 
     static {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -61,7 +61,6 @@ public class ConfigManager {
 
     public static void load() {
         guiConfig = loadConfig(Constants.GUI_CONFIG_PATH, GuiConfig.class);
-        upgradeConfig = loadConfig(Constants.UPGRADE_PATH, UpgradeConfig.class);
     }
 
     private static <T> T loadConfig(String path, Class<T> clazz) {
@@ -77,6 +76,24 @@ public class ConfigManager {
         return null;
     }
 
+    private static <T> void checkFile(File src, Class<T> clazz) throws Exception {
+        File parent = FileUtil.getParent(src, 1);
+        if (!parent.exists()) {
+            boolean wasSuccessful = parent.mkdirs();
+            objectMapper.writeValue(src, clazz.getDeclaredConstructor().newInstance());
+            if (!wasSuccessful)
+                logger.error("{} 创建失败", src.getAbsolutePath());
+        }
+    }
+
+    public static void save() {
+        try {
+            objectMapper.writeValue(new File(Constants.GUI_CONFIG_PATH), guiConfig);
+        } catch (IOException e) {
+            logger.error("save config error", e);
+        }
+    }
+
 // --------------------------------{ 主题 }------------------------------------------
 
     public static String themeName() {
@@ -84,82 +101,15 @@ public class ConfigManager {
     }
 
     public static Theme theme() {
-        return THEME_LIST.get(THEME_NAME_LIST.indexOf(themeName()));
+        return THEME_MAP.get(themeName());
     }
 
-    public static void themeName(String themeName) {
-        int themeIndex = THEME_NAME_LIST.indexOf(themeName);
-        if (themeIndex < 0) return;
-
-        guiConfig.setTheme(themeName);
-        Application.setUserAgentStylesheet(theme().getUserAgentStylesheet());
+    public static void theme(Theme theme) {
+        Application.setUserAgentStylesheet(theme.getUserAgentStylesheet());
+        guiConfig.setTheme(theme.getName());
     }
 
-    public static boolean hasProxy() {
-        if (guiConfig == null)
-            return false;
-        ProxyInfo proxyInfo = getProxyInfo();
-        return proxyInfo != null
-                && StringUtils.isNoneEmpty(proxyInfo.getHost())
-                && StringUtils.isNoneEmpty(proxyInfo.getPort())
-                && Integer.parseInt(proxyInfo.getPort()) > 0;
-    }
-
-    public static ProxyInfo getProxyInfo() {
-        return guiConfig.getProxyInfo();
-    }
-
-    private static void setProxyInfo(ProxyInfo info) {
-        guiConfig.setProxyInfo(info);
-    }
-
-    public static String proxyHost() {
-        if (getProxyInfo() == null) return null;
-        return getProxyInfo().getHost();
-    }
-
-    public static void proxyHost(String host) {
-        final Matcher matcher = PatternPool.IPV4.matcher(host);
-        if (matcher.matches()) {
-            if (getProxyInfo() == null)
-                setProxyInfo(new ProxyInfo());
-            getProxyInfo().setHost(host);
-        }
-    }
-
-    public static String proxyPort() {
-        if (getProxyInfo() == null) return null;
-        return getProxyInfo().getPort();
-    }
-
-    public static int getProxyPort() {
-        return Integer.parseInt(getProxyInfo().getPort());
-    }
-
-    public static void proxyPort(String port) {
-        if (NumberUtil.isNumber(port)) {
-            if (getProxyInfo() == null)
-                setProxyInfo(new ProxyInfo());
-            getProxyInfo().setPort(port);
-        }
-    }
-
-    public static Locale language() {
-        String language = guiConfig.getLanguage();
-        return LocaleUtils.toLocale(Optional.ofNullable(language).orElse(DEFAULT_LANGUAGE.toString()));
-    }
-
-    public static void language(Locale locale) {
-        guiConfig.setLanguage(locale.toString());
-    }
-
-    public static boolean autoStart() {
-        return guiConfig.getAutoStart();
-    }
-
-    public static void autoStart(Boolean autoStart) {
-        guiConfig.setAutoStart(autoStart);
-    }
+// --------------------------------{ 网络代理 }------------------------------------------
 
     public static ProxySetup proxySetup() {
         return ProxySetup.valueOf(StringUtils.upperCase(guiConfig.getProxySetup()));
@@ -186,6 +136,94 @@ public class ConfigManager {
         }
     }
 
+    public static boolean hasProxy() {
+        if (guiConfig == null)
+            return false;
+        ProxyInfo proxyInfo = getProxyInfo();
+        return proxyInfo != null
+                && StringUtils.isNoneEmpty(proxyInfo.getHost())
+                && StringUtils.isNoneEmpty(proxyInfo.getPort())
+                && Integer.parseInt(proxyInfo.getPort()) > 0;
+    }
+
+    public static ProxyInfo getProxyInfo() {
+        ProxyInfo proxyInfo = guiConfig.getProxyInfo();
+
+        if (proxyInfo == null)
+            setProxyInfo(new ProxyInfo());
+
+        return guiConfig.getProxyInfo();
+    }
+
+    private static void setProxyInfo(ProxyInfo info) {
+        guiConfig.setProxyInfo(info);
+    }
+
+    public static String proxyHost() {
+        return getProxyInfo().getHost();
+    }
+
+    public static void proxyHost(String host) {
+        final Matcher matcher = PatternPool.IPV4.matcher(host);
+        if (!matcher.matches()) return;
+
+        getProxyInfo().setHost(host);
+
+        checkProxy();
+    }
+
+    public static String proxyPort() {
+        return getProxyInfo().getPort();
+    }
+
+    public static int getProxyPort() {
+        return Integer.parseInt(proxyPort());
+    }
+
+    public static void proxyPort(String port) {
+        if (!NumberUtil.isNumber(port)) return;
+
+        getProxyInfo().setPort(port);
+
+        checkProxy();
+    }
+
+    private static void checkProxy() {
+        if (!hasProxy()) return;
+
+        try {
+            InetSocketAddress address = NetUtil.createAddress(proxyHost(), getProxyPort());
+            if (NetUtil.isOpen(address, 2000)) {
+                HttpUtil.getInstance().proxy(proxySetup(), ConfigManager.getProxyInfo());
+            }
+        } catch (Exception e) {
+            logger.error(STR."host=\{proxyHost()},port=\{proxyPort()}", e);
+        }
+    }
+
+// --------------------------------{ 语言 }------------------------------------------
+
+    public static Locale language() {
+        String language = guiConfig.getLanguage();
+        return LocaleUtils.toLocale(Optional.ofNullable(language).orElse(DEFAULT_LANGUAGE.toString()));
+    }
+
+    public static void language(Locale locale) {
+        guiConfig.setLanguage(locale.toString());
+    }
+
+// --------------------------------{ 开机自启 }------------------------------------------
+
+    public static boolean autoStart() {
+        return guiConfig.getAutoStart();
+    }
+
+    public static void autoStart(Boolean autoStart) {
+        guiConfig.setAutoStart(autoStart);
+    }
+
+// --------------------------------{ 静默启动 }------------------------------------------
+
     public static boolean silentStartup() {
         return guiConfig.getSilentStartup();
     }
@@ -194,35 +232,33 @@ public class ConfigManager {
         guiConfig.setSilentStartup(startup);
     }
 
+// --------------------------------{ 版本检查 }------------------------------------------
+
+    public static UpgradeConfig upgradeConfig() {
+        return guiConfig.getUpgradeConfig();
+    }
+
     public static AList aList() {
-        return upgradeConfig.getAList();
+        return upgradeConfig().getAList();
     }
 
     public static String aListVersion() {
-        return upgradeConfig.getAList().getVersion();
+        return aList().getVersion();
     }
 
     public static void aListVersion(String version) {
-        upgradeConfig.getAList().setVersion(version);
+        aList().setVersion(version);
     }
 
-
-    private static <T> void checkFile(File src, Class<T> clazz) throws Exception {
-        File parent = FileUtil.getParent(src, 1);
-        if (!parent.exists()) {
-            boolean wasSuccessful = parent.mkdirs();
-            objectMapper.writeValue(src, clazz.getDeclaredConstructor().newInstance());
-            if (!wasSuccessful)
-                logger.error("{} 创建失败", src.getAbsolutePath());
-        }
+    public static Gui gui() {
+        return upgradeConfig().getGui();
     }
 
-    public static void save() {
-        try {
-            objectMapper.writeValue(new File(Constants.GUI_CONFIG_PATH), guiConfig);
-            objectMapper.writeValue(new File(Constants.UPGRADE_PATH), upgradeConfig);
-        } catch (IOException e) {
-            logger.error("save config error", e);
-        }
+    public static String guiVersion() {
+        return gui().getVersion();
+    }
+
+    public static void guiVersion(String version) {
+        gui().setVersion(version);
     }
 }

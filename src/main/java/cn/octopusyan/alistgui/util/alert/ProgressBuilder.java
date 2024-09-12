@@ -52,7 +52,7 @@ public class ProgressBuilder extends BaseBuilder<ProgressBuilder, Dialog<Void>> 
         HBox hBox = new HBox();
         hBox.setPrefWidth(350);
         hBox.setAlignment(Pos.CENTER);
-        hBox.setPadding(new Insets(0, 0, 0, 0));
+        hBox.setPadding(new Insets(10, 0, 10, 0));
 
         // 取消按钮
         Button cancel = new Button(Context.getLanguageBinding("label.cancel").get());

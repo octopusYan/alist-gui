@@ -1,9 +1,8 @@
 package cn.octopusyan.alistgui.task;
 
-import cn.hutool.core.util.StrUtil;
 import cn.octopusyan.alistgui.base.BaseTask;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
-import cn.octopusyan.alistgui.model.UpgradeConfig;
+import cn.octopusyan.alistgui.model.upgrade.AList;
 import cn.octopusyan.alistgui.model.upgrade.UpgradeApp;
 import cn.octopusyan.alistgui.util.JsonUtil;
 import cn.octopusyan.alistgui.viewModel.AboutViewModule;
@@ -16,31 +15,30 @@ import org.apache.commons.lang3.StringUtils;
  * @author octopus_yan
  */
 public class UpgradeTask extends BaseTask {
-    private final AboutViewModule vm;
+    private final AboutViewModule viewModule;
     private final UpgradeApp app;
 
     public UpgradeTask(AboutViewModule viewModel, UpgradeApp app) {
-        this.vm = viewModel;
+        this.viewModule = viewModel;
         this.app = app;
     }
 
     @Override
     protected void task() throws Exception {
-        String releaseApi = StrUtil.format(UpgradeConfig.RELEASE_API, app.getOwner(), app.getRepo());
-        String responseStr = HttpUtil.getInstance().get(releaseApi, null, null);
+        String responseStr = HttpUtil.getInstance().get(app.getReleaseApi(), null, null);
         JsonNode response = JsonUtil.parseJsonObject(responseStr);
 
+        // TODO 校验返回内容
         String newVersion = response.get("tag_name").asText();
-        String downloadUrl = StrUtil.format(UpgradeConfig.DOWNLOAD_API,
-                app.getOwner(),
-                app.getRepo(),
-                newVersion,
-                app.getReleaseFile()
-        );
 
         runLater(() -> {
-            vm.aListUpgradeProperty().setValue(StringUtils.equals(app.getVersion(), newVersion));
-            vm.aListNewVersionProperty().setValue(newVersion);
+            if (app instanceof AList) {
+                viewModule.aListUpgradeProperty().setValue(!StringUtils.equals(app.getVersion(), newVersion));
+                viewModule.aListNewVersionProperty().setValue(newVersion);
+            } else {
+                viewModule.guiUpgradeProperty().setValue(!StringUtils.equals(app.getVersion(), newVersion));
+                viewModule.guiNewVersionProperty().setValue(newVersion);
+            }
         });
     }
 }
