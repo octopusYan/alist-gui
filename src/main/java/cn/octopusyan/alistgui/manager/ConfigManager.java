@@ -9,6 +9,7 @@ import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
+import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
 import cn.octopusyan.alistgui.model.GuiConfig;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.model.UpgradeConfig;
@@ -17,6 +18,7 @@ import cn.octopusyan.alistgui.model.upgrade.Gui;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import javafx.application.Platform;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -168,8 +171,6 @@ public class ConfigManager {
         if (!matcher.matches()) return;
 
         getProxyInfo().setHost(host);
-
-        checkProxy();
     }
 
     public static String proxyPort() {
@@ -184,21 +185,24 @@ public class ConfigManager {
         if (!NumberUtil.isNumber(port)) return;
 
         getProxyInfo().setPort(port);
-
-        checkProxy();
     }
 
-    private static void checkProxy() {
+    public static void checkProxy(BiConsumer<Boolean, String> consumer) {
         if (!hasProxy()) return;
 
-        try {
-            InetSocketAddress address = NetUtil.createAddress(proxyHost(), getProxyPort());
-            if (NetUtil.isOpen(address, 2000)) {
-                HttpUtil.getInstance().proxy(proxySetup(), ConfigManager.getProxyInfo());
+        ThreadPoolManager.getInstance().execute(() -> {
+            try {
+                InetSocketAddress address = NetUtil.createAddress(proxyHost(), getProxyPort());
+                if (NetUtil.isOpen(address, 5000)) {
+                    Platform.runLater(() -> consumer.accept(true, "success"));
+                } else {
+                    Platform.runLater(() -> consumer.accept(false, "connection timed out"));
+                }
+            } catch (Exception e) {
+                logger.error(STR."host=\{proxyHost()},port=\{proxyPort()}", e);
+                Platform.runLater(() -> consumer.accept(false, e.getMessage()));
             }
-        } catch (Exception e) {
-            logger.error(STR."host=\{proxyHost()},port=\{proxyPort()}", e);
-        }
+        });
     }
 
 // --------------------------------{ 语言 }------------------------------------------

@@ -5,6 +5,7 @@ import cn.octopusyan.alistgui.base.BaseTask;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
+import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.task.ProxyCheckTask;
 import cn.octopusyan.alistgui.util.alert.AlertUtil;
 import javafx.application.Platform;
@@ -81,7 +82,16 @@ public class SetupViewModel {
 
         proxyTestUrl.setValue(checkUrl);
 
-        getProxyCheckTask(checkUrl).execute();
+        ConfigManager.checkProxy((success, msg) -> {
+            if (!success) {
+                final var tmp = Context.getLanguageBinding("proxy.test.result.failed").getValue();
+                AlertUtil.error(STR."\{tmp}:\{msg}").show();
+                return;
+            }
+
+            HttpUtil.getInstance().proxy(ConfigManager.proxySetup(), ConfigManager.getProxyInfo());
+            getProxyCheckTask(checkUrl).execute();
+        });
     }
 
     private static ProxyCheckTask getProxyCheckTask(String checkUrl) {
@@ -105,7 +115,8 @@ public class SetupViewModel {
             public void onFailed(Throwable throwable) {
                 Platform.runLater(progress::close);
                 final var tmp = Context.getLanguageBinding("proxy.test.result.failed").getValue();
-                AlertUtil.error(tmp + throwable.getMessage()).show();
+                String throwableMessage = throwable.getMessage();
+                AlertUtil.error(tmp + (StringUtils.isEmpty(throwableMessage) ? "" : throwableMessage)).show();
             }
         });
         return task;
