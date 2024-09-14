@@ -2,10 +2,13 @@ package cn.octopusyan.alistgui.controller;
 
 import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.base.BaseController;
+import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.viewModel.SetupViewModel;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -98,6 +101,18 @@ public class SetupController extends BaseController<SetupViewModel> implements I
         viewModel.languageProperty().bind(languageComboBox.getSelectionModel().selectedItemProperty());
         viewModel.themeProperty().bind(themeComboBox.getSelectionModel().selectedItemProperty());
         viewModel.proxySetupProperty().bind(proxySetupComboBox.getSelectionModel().selectedItemProperty());
+
+        autoStartCheckBox.selectedProperty().addListener((_, _, checked) -> {
+            try {
+                if (checked) {
+                    Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, Constants.REG_AUTO_RUN, Constants.APP_TITLE, Constants.APP_EXE);
+                } else {
+                    Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, Constants.REG_AUTO_RUN, Constants.APP_TITLE);
+                }
+            } catch (Throwable e) {
+                logger.error("", e);
+            }
+        });
     }
 
     @FXML

@@ -23,4 +23,7 @@ public class Constants {
     public static final String CONFIG_DIR_PATH = STR."\{DATA_DIR_PATH}\{File.separator}config";
     public static final String GUI_CONFIG_PATH = STR."\{CONFIG_DIR_PATH}\{File.separator}gui.yaml";
     public static final String BAK_FILE_PATH = STR."\{Constants.TMP_DIR_PATH}\{File.separator}bak";
+
+    public static final String REG_AUTO_RUN = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+    public static final String APP_EXE = STR."\{DATA_DIR_PATH}\{File.separator}\{APP_NAME}.exe";
 }

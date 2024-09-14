@@ -1,5 +1,6 @@
 module cn.octopusyan.alistgui {
     requires java.net.http;
+    requires com.sun.jna.platform;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
