@@ -18,11 +18,13 @@
         </Button>
     </AnchorPane>
 
-    <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="0"
-          AnchorPane.rightAnchor="0">
+    <VBox alignment="CENTER" spacing="20"
+          AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
 
         <Label style="-fx-background-radius: 10;-fx-background-color: -color-button-bg-hover;"
-               styleClass="button, flat, danger" text="%admin.pwd.toptip"/>
+               styleClass="admin-toptip, button, flat, danger" text="%admin.pwd.toptip"/>
+
+        <Pane style="-fx-background-color: transparent"/>
 
         <HBox alignment="CENTER" styleClass="admin-field">
             <Label text="%admin.pwd.user-field"/>

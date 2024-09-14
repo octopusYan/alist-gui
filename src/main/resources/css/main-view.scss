@@ -46,10 +46,11 @@
 }
 
 #moreButton {
-  -fx-padding: 2 30;
+  -fx-padding: 3 30;
 
   -fx-background-color: transparent;
   -fx-border-color: -color-chart-6-alpha70;
+  -color-button-fg: -color-chart-6-alpha70;
 
   &:hover {
     -fx-background-color: -color-chart-6-alpha20;
