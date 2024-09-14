@@ -1,8 +1,8 @@
-package cn.octopusyan.alistgui.manager;
+package cn.octopusyan.alistgui.util;
 
+import cn.octopusyan.alistgui.Application;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,11 @@ public class WindowsUtil {
     }
 
     public static void bindDragged(Pane pane) {
-        Window stage = getStage(pane);
+        Stage stage = getStage(pane);
+        bindDragged(pane, stage);
+    }
+
+    public static void bindDragged(Pane pane, Stage stage) {
         pane.setOnMousePressed(event -> {
             paneXOffset.put(pane, stage.getX() - event.getScreenX());
             paneYOffset.put(pane, stage.getY() - event.getScreenY());
@@ -37,6 +41,10 @@ public class WindowsUtil {
     }
 
     public static Stage getStage(Pane pane) {
-        return (Stage) pane.getScene().getWindow();
+        try {
+            return (Stage) pane.getScene().getWindow();
+        } catch (Throwable e) {
+            return Application.getPrimaryStage();
+        }
     }
 }

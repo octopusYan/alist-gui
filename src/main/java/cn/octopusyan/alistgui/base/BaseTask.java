@@ -1,8 +1,8 @@
 package cn.octopusyan.alistgui.base;
 
 import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
+import lombok.Getter;
 
 /**
  * @author octopus_yan
@@ -10,16 +10,18 @@ import javafx.concurrent.Task;
 public abstract class BaseTask extends Task<Void> {
     private final ThreadPoolManager Executor = ThreadPoolManager.getInstance();
     protected Listener listener;
+    @Getter
+    private final String name;
+
+    protected BaseTask(String name) {
+        this.name = name;
+    }
 
     @Override
     protected Void call() throws Exception {
         if (listener != null) listener.onStart();
         task();
         return null;
-    }
-
-    protected void runLater(Runnable runnable) {
-        Platform.runLater(runnable);
     }
 
     protected abstract void task() throws Exception;

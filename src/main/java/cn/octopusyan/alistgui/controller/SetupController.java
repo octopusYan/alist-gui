@@ -27,7 +27,7 @@ import java.util.Locale;
  *
  * @author octopus_yan
  */
-public class SetupController extends BaseController<VBox> implements Initializable {
+public class SetupController extends BaseController<SetupViewModel> implements Initializable {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @FXML
@@ -50,8 +50,6 @@ public class SetupController extends BaseController<VBox> implements Initializab
     public TextField proxyHost;
     @FXML
     public TextField proxyPort;
-
-    private final SetupViewModel viewModule = new SetupViewModel();
 
     @Override
     public VBox getRootPanel() {
@@ -91,20 +89,19 @@ public class SetupController extends BaseController<VBox> implements Initializab
 
     @Override
     public void initViewAction() {
-        autoStartCheckBox.selectedProperty().bindBidirectional(viewModule.autoStartProperty());
-        silentStartupCheckBox.selectedProperty().bindBidirectional(viewModule.silentStartupProperty());
-        languageComboBox.getSelectionModel().selectedItemProperty()
-                .subscribe(locale -> viewModule.languageProperty().set(locale));
-        themeComboBox.getSelectionModel().selectedItemProperty()
-                .subscribe(theme -> viewModule.themeProperty().set(theme));
-        proxySetupComboBox.getSelectionModel().selectedItemProperty()
-                .subscribe((setup) -> viewModule.proxySetupProperty().set(setup));
-        proxyHost.textProperty().bindBidirectional(viewModule.proxyHostProperty());
-        proxyPort.textProperty().bindBidirectional(viewModule.proxyPortProperty());
+        //
+        autoStartCheckBox.selectedProperty().bindBidirectional(viewModel.autoStartProperty());
+        silentStartupCheckBox.selectedProperty().bindBidirectional(viewModel.silentStartupProperty());
+        proxyHost.textProperty().bindBidirectional(viewModel.proxyHostProperty());
+        proxyPort.textProperty().bindBidirectional(viewModel.proxyPortProperty());
+
+        viewModel.languageProperty().bind(languageComboBox.getSelectionModel().selectedItemProperty());
+        viewModel.themeProperty().bind(themeComboBox.getSelectionModel().selectedItemProperty());
+        viewModel.proxySetupProperty().bind(proxySetupComboBox.getSelectionModel().selectedItemProperty());
     }
 
     @FXML
     public void proxyTest() {
-        viewModule.proxyTest();
+        viewModel.proxyTest();
     }
 }

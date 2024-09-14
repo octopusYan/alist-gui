@@ -79,20 +79,6 @@
             <version>${logback.version}</version>
         </dependency>
 
-        <!-- junit -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- common -->
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
@@ -205,6 +191,7 @@
                         <arg>${cssSrcPath}/main-view.scss:${cssTargetPath}/main-view.css</arg>
                         <arg>${cssSrcPath}/setup-view.scss:${cssTargetPath}/setup-view.css</arg>
                         <arg>${cssSrcPath}/about-view.scss:${cssTargetPath}/about-view.css</arg>
+                        <arg>${cssSrcPath}/admin-panel.scss:${cssTargetPath}/admin-panel.css</arg>
                         <arg>--no-source-map</arg>
                     </args>
                 </configuration>

@@ -1,11 +1,14 @@
 package cn.octopusyan.alistgui.manager.http;
 
 import cn.octopusyan.alistgui.enums.ProxySetup;
+import cn.octopusyan.alistgui.manager.http.handler.BodyHandler;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ProxySelector;
@@ -15,15 +18,19 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 /**
  * 网络请求封装
  *
  * @author octopus_yan@foxmail.com
  */
+@Slf4j
 public class HttpUtil {
     private volatile static HttpUtil util;
     @Getter
@@ -107,6 +114,30 @@ public class HttpUtil {
         return response.body();
     }
 
+    public void download(String url, String savePath, BiConsumer<Long, Long> listener) throws IOException, InterruptedException {
+        HttpRequest request = getRequest(url, null).build();
+        // 检查bin目录
+        File binDir = new File(savePath);
+        if (!binDir.exists()) {
+            log.debug(STR."dir [\{savePath}] not exists");
+            //noinspection ResultOfMethodCallIgnored
+            binDir.mkdirs();
+            log.debug(STR."created dir [\{savePath}]");
+        }
+
+        // 下载处理器
+        var handler = BodyHandler.create(
+                Path.of(savePath),
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE
+        );
+
+        // 下载监听
+        if (listener != null)
+            handler.listener(listener);
+
+        HttpResponse<Path> response = httpClient.send(request, handler);
+    }
+
     private HttpRequest.Builder getRequest(String uri, JsonNode header) {
         HttpRequest.Builder request = HttpRequest.newBuilder();
         // 请求地址
@@ -141,7 +172,7 @@ public class HttpUtil {
             }
         }
         if (!formParams.isEmpty()) {
-            formParams = new StringBuilder("?" + formParams.substring(1));
+            formParams = new StringBuilder(STR."?\{formParams.substring(1)}");
         }
 
         return formParams.toString();

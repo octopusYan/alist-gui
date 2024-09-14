@@ -1,0 +1,31 @@
+/**************************************************
+ * Admin Password Panel
+**************************************************/
+
+#admin-panel {
+  -fx-background-color: -color-bg-default;
+  -fx-background-radius: 15;
+  -fx-border-radius: 15;
+
+  .header {
+    .label {
+      -fx-font-size: 20;
+    }
+
+    .button, .button.ikonli-font-icon {
+      -fx-background-radius: 15;
+    }
+  }
+
+  .admin-field {
+    -fx-spacing: 10;
+
+    .text-field {
+      -fx-pref-width: 100;
+    }
+
+    &-value {
+      //-fx-padding: 5 10;
+    }
+  }
+}

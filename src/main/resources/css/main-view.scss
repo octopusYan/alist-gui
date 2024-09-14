@@ -14,24 +14,27 @@
   -fx-border-radius: 10;
 }
 
-.control-menu, #startButton, #passwordButton, #restartButton, #moreButton {
+.control-menu, #moreButton {
   -fx-font-size: 15;
   -fx-background-radius: 15;
-  -fx-padding: 10 40 10 40;
+  -fx-padding: 10 40;
   -fx-border-radius: 15;
   -fx-border-width: 2;
 }
 
 #startButton {
+  -color-button-bg-hover: -color-button-bg;
+  -color-button-bg-focused: -color-button-bg;
   -fx-border-color: -color-button-bg;
+  -fx-border-color-hover: -color-button-bg;
 }
 
 #passwordButton {
   -color-button-bg: -color-success-3;
   -color-button-bg-hover: -color-button-bg;
-  -color-button-bg-focused: -color-button-bg;
+  -color-button-bg-focused: -color-success-3;
   -color-button-bg-pressed: -color-button-bg;
-  -fx-border-color: -color-button-bg;
+  -fx-border-color: -color-success-3;
 }
 
 #restartButton {
@@ -43,12 +46,20 @@
 }
 
 #moreButton {
-  -color-button-bg-focused: transparent;
-  -color-button-bg-pressed: transparent;
-  -color-button-bg-hover: -color-chart-6-alpha20;
-  -color-button-border: -color-chart-6;
-  -fx-border-color: -color-chart-6;
-  -color-button-border-hover: -color-chart-6-alpha70;
+  -fx-padding: 2 30;
+
+  -fx-background-color: transparent;
+  -fx-border-color: -color-chart-6-alpha70;
+
+  &:hover {
+    -fx-background-color: -color-chart-6-alpha20;
+    -fx-border-color: -color-chart-6-alpha70;
+  }
+
+  .context-menu, .menu-item {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+  }
 }
 
 .logArea {

@@ -1,12 +1,17 @@
 package cn.octopusyan.alistgui.manager;
 
+import atlantafx.base.controls.Popover;
 import atlantafx.base.util.BBCodeParser;
+import cn.hutool.core.swing.clipboard.ClipboardUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.octopusyan.alistgui.config.Context;
 import javafx.application.Platform;
-import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +19,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,8 +33,9 @@ public class ConsoleLog {
     public static final String format = "yyyy/MM/dd hh:mm:ss";
     private volatile static ConsoleLog log;
     private final VBox textArea;
-    private final static String CONSOLE_COLOR_PREFIX = "^\033\\[(\\d+)m(.*)\033\\[0m(.*)$";
-    private final static String CONSOLE_COLOR_SUFFIX = "\033[0m";
+    private final static String CONSOLE_COLOR_PREFIX = "^\033[";
+    private final static String CONSOLE_MSG_REX = "^\033\\[(\\d+)m(.*)\033\\[0m(.*)$";
+    private final static String URL_IP_REX = "^((ht|f)tps?:\\/\\/)?[\\w-+&@#/%?=~_|!:,.;]*[\\w-+&@#/%=~_|]+(:\\d{1,5})?\\/?$";
 
     private ConsoleLog(ScrollPane logAreaSp, VBox textArea) {
         this.textArea = textArea;
@@ -78,37 +85,104 @@ public class ConsoleLog {
     }
 
     public static void msg(String message, Object... param) {
-        if (message.contains("\033[")) {
-            message = resetConsoleColor(message);
-        }
+        if (StringUtils.isEmpty(message) || !isInit()) return;
+        message = message.strip();
+        message = StrUtil.format(message, param);
 
-        Node text = BBCodeParser.createFormattedText(STR."\{StrUtil.format(message, param)}");
-        Platform.runLater(() -> log.textArea.getChildren().add(text));
+        // 多颜色消息处理
+        if (StringUtils.countMatches(message, CONSOLE_COLOR_PREFIX) > 1) {
+            String[] split = message.replace(CONSOLE_MSG_REX, "\n%s".formatted(CONSOLE_COLOR_PREFIX)).split("\n");
+            List<String> msgs = Arrays.stream(split).toList();
+            for (String msg : msgs) {
+                msg(msg);
+            }
+            return;
+        }
+        message = setPwdText(message);
+        message = resetConsoleColor(message);
+
+        print(message);
     }
 
     public static void printLog(String tag, Level level, String message, Object... param) {
+        if (!isInit()) return;
 
+        // 时间
         String time = DateFormatUtils.format(new Date(), format);
         time = STR."[color=-color-accent-emphasis]\{time}[/color]";
-
+        // 级别
         String levelStr = resetLevelColor(level);
-
+        // 标签
         tag = StringUtils.isEmpty(tag) ? "" : STR."\{tag}: ";
-
+        // 消息
         message = STR."[color=-color-fg-muted]\{StrUtil.format(message, param)}[/color]";
 
-        Node text;
-        String input = STR."\{time} \{levelStr} \{tag}\{message}";
+        // 拼接后输出
+        String input = STR."\{time} \{levelStr} - \{tag}\{message}";
 
-        if (input.contains("\n")) {
-            text = BBCodeParser.createLayout(input);
-        } else {
-            text = BBCodeParser.createFormattedText(input);
+        print(input);
+    }
+
+    private static void print(String message) {
+
+        // 标记链接
+        String regex = STR.".*(\{AListManager.scheme()}|\{URL_IP_REX}).*";
+        if (ReUtil.isMatch(regex, message)) {
+            String text = ReUtil.get(regex, message, 1);
+            String url = text.startsWith("http") ? STR."http://\{text}" : text;
+            url = url.replace("0.0.0.0", "127.0.0.1");
+            message = message.replace(text, STR."[url=\{url}]\{text}[/url]");
         }
+
+        TextFlow text = BBCodeParser.createFormattedText(STR."\{message}");
+        // 处理链接
+        setLink(text);
+
         Platform.runLater(() -> log.textArea.getChildren().add(text));
     }
 
-//============================{ 私有方法 }================================
+//==========================================={ 私有方法 }===================================================
+
+    /**
+     * 将密码标记为link，一起处理点击事件
+     *
+     * @param msg 输出信息
+     * @return 处理后的信息
+     */
+    private static String setPwdText(String msg) {
+        if (!ReUtil.isMatch(AListManager.PASSWORD_MSG_REG, msg)) return msg;
+
+        String password = ReUtil.get(AListManager.PASSWORD_MSG_REG, msg, 2);
+        AListManager.tmpPassword(password);
+        return msg.replace(password, STR."[url=\{password}]\{password}[/url]");
+    }
+
+    /**
+     * 处理文本流中的链接
+     *
+     * @param text 文本流
+     */
+    private static void setLink(TextFlow text) {
+
+        text.getChildren().forEach(child -> {
+            switch (child) {
+                case Hyperlink link -> link.setOnAction(_ -> {
+                    String linkText = link.getUserData().toString();
+                    if (ReUtil.isMatch(URL_IP_REX, linkText)) {
+                        Context.getApplication().getHostServices().showDocument(linkText);
+                    } else {
+                        ClipboardUtil.setStr(linkText);
+                        var pop = new Popover(new Text(Context.getLanguageBinding("msg.alist.pwd.copy").get()));
+                        pop.show(link);
+                    }
+                    link.setVisited(false);
+                });
+                case TextFlow flow -> setLink(flow);
+                default -> {
+                }
+            }
+        });
+    }
 
     /**
      * 控制台输出颜色
@@ -117,16 +191,13 @@ public class ConsoleLog {
      * @return bbcode 颜色文本
      */
     private static String resetConsoleColor(String msg) {
-        try {
-            String colorCode = ReUtil.get(CONSOLE_COLOR_PREFIX, msg, 1);
-            String color = StringUtils.lowerCase(Color.valueOf(Integer.parseInt(colorCode)).getColor());
-            String colorMsg = ReUtil.get(CONSOLE_COLOR_PREFIX, msg, 2);
-            msg = ReUtil.get(CONSOLE_COLOR_PREFIX, msg, 3);
-            return color(color, colorMsg) + msg;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-        return "";
+        if (!msg.contains("\033[")) return msg;
+
+        String colorCode = ReUtil.get(CONSOLE_MSG_REX, msg, 1);
+        String color = StringUtils.lowerCase(Color.valueOf(Integer.parseInt(colorCode)).getColor());
+        String colorMsg = ReUtil.get(CONSOLE_MSG_REX, msg, 2);
+        msg = ReUtil.get(CONSOLE_MSG_REX, msg, 3);
+        return color(color, colorMsg) + msg;
     }
 
     /**
@@ -149,8 +220,8 @@ public class ConsoleLog {
     @RequiredArgsConstructor
     public enum Level {
         INFO("INFO", null),
-        WARN("WARN", "color=-color-chart-2"),
-        ERROR("ERROR", "color=-color-chart-3"),
+        WARN("WARN", "-color-danger-emphasis"),
+        ERROR("ERROR", "-color-danger-fg"),
         ;
 
         private final String code;

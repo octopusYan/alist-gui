@@ -1,6 +1,7 @@
 package cn.octopusyan.alistgui.config;
 
 import atlantafx.base.theme.Theme;
+import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.controller.AboutController;
 import cn.octopusyan.alistgui.controller.MainController;
@@ -9,6 +10,7 @@ import cn.octopusyan.alistgui.controller.SetupController;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.util.FxmlUtil;
+import cn.octopusyan.alistgui.util.ProcessesUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
@@ -24,7 +26,7 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -34,9 +36,11 @@ import java.util.*;
  * @author octopus_yan
  */
 public class Context {
+    @Getter
+    private static Application application;
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static Scene scene;
-    private static final IntegerProperty currentViewIndexProperty = new SimpleIntegerProperty(0);
+    private static final IntegerProperty currentViewIndex = new SimpleIntegerProperty(0);
     private static final ObjectProperty<Theme> theme = new SimpleObjectProperty<>(ConfigManager.theme());
 
     /**
@@ -84,6 +88,10 @@ public class Context {
         };
     }
 
+    public static void setApplication(Application application) {
+        Context.application = application;
+    }
+
     public static ObjectProperty<Theme> themeProperty() {
         return theme;
     }
@@ -121,8 +129,7 @@ public class Context {
         LANGUAGE_RESOURCE_FACTORY.setResourceBundle(ResourceBundle.getBundle(LANGUAGE_RESOURCE_NAME, locale));
 
         log.info("language changed to {}", locale);
-        if (ConsoleLog.isInit())
-            ConsoleLog.info(STR."language changed to \{locale}");
+        ConsoleLog.info(STR."language changed to \{locale}");
     }
 
     /**
@@ -147,13 +154,6 @@ public class Context {
      * 初始化 语言
      */
     private static void initI18n() {
-        currentLocaleProperty().addListener((_, _, locale) -> Platform.runLater(() -> {
-            try {
-                loadScene();
-            } catch (IOException e) {
-                log.error("", e);
-            }
-        }));
     }
 
     /**
@@ -171,45 +171,58 @@ public class Context {
      * 初始化场景
      *
      * @return Scene
-     * @throws IOException 如果在加载过程中发生错误
      */
-    public static Scene initScene() throws IOException {
-        initI18n();
+    public static Scene initScene() {
+        // locale监听; 切换后，重新加载界面
+        currentLocaleProperty().addListener((_, _, locale) -> Platform.runLater(Context::loadScene));
+        // 加载
         loadScene();
         return scene;
     }
 
-    private static void loadScene() throws IOException {
-        FXMLLoader loader = FxmlUtil.load("root-view");
-        loader.setControllerFactory(Context.getControlFactory());
-        //底层面板
-        Pane root = loader.load();
-        Optional.ofNullable(scene).ifPresentOrElse(
-                s -> s.setRoot(root),
-                () -> {
-                    scene = new Scene(root, root.getPrefWidth() + 20, root.getPrefHeight() + 20, Color.TRANSPARENT);
-                    URL resource = Objects.requireNonNull(Context.class.getResource("/css/root-view.css"));
-                    scene.getStylesheets().addAll(resource.toExternalForm());
-                    scene.setFill(Color.TRANSPARENT);
-                }
-        );
+    private static void loadScene() {
+        try {
+            FXMLLoader loader = FxmlUtil.load("root-view");
+            loader.setControllerFactory(Context.getControlFactory());
+            //底层面板
+            Pane root = loader.load();
+            Optional.ofNullable(scene).ifPresentOrElse(
+                    s -> s.setRoot(root),
+                    () -> {
+                        scene = new Scene(root, root.getPrefWidth() + 20, root.getPrefHeight() + 20, Color.TRANSPARENT);
+                        URL resource = Objects.requireNonNull(Context.class.getResource("/css/root-view.css"));
+                        scene.getStylesheets().addAll(resource.toExternalForm());
+                        scene.setFill(Color.TRANSPARENT);
+                    }
+            );
+        } catch (Throwable e) {
+            log.error("loadScene error", e);
+        }
     }
 
-    /**
-     * 设置当前展示的界面
-     *
-     * @param index 界面Index
-     */
-    public static void setCurrentViewIndex(Number index) {
-        currentViewIndexProperty.setValue(index);
+    public static int currentViewIndex() {
+        return currentViewIndex.get();
     }
 
-    /**
-     * 获取当前展示的界面Index
-     *
-     * @return 界面Index
-     */
-    public static Integer getCurrentViewIndex() {
-        return currentViewIndexProperty.get();
+    public static IntegerProperty currentViewIndexProperty() {
+        return currentViewIndex;
+    }
+
+    public static void openUrl(String url) {
+        getApplication().getHostServices().showDocument(url);
+    }
+
+    public static void openFolder(File file) {
+        openFile(file);
+    }
+
+    public static void openFile(File file) {
+        if (!file.exists()) return;
+
+        if (file.isDirectory()) {
+            ProcessesUtil.init(file.getAbsolutePath()).exec("explorer.exe .");
+        } else {
+            ProcessesUtil.init(file.getParentFile().getAbsolutePath()).exec(STR."explorer.exe /select,\{file.getName()}");
+        }
     }
 }

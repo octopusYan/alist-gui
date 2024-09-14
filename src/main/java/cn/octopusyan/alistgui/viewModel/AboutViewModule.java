@@ -1,27 +1,19 @@
 package cn.octopusyan.alistgui.viewModel;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.util.CharsetUtil;
-import cn.hutool.core.util.StrUtil;
-import cn.hutool.core.util.ZipUtil;
-import cn.octopusyan.alistgui.base.BaseTask;
-import cn.octopusyan.alistgui.config.Constants;
+import cn.octopusyan.alistgui.base.BaseViewModel;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.model.upgrade.AList;
 import cn.octopusyan.alistgui.model.upgrade.UpgradeApp;
-import cn.octopusyan.alistgui.task.DownloadTask;
-import cn.octopusyan.alistgui.task.UpgradeTask;
-import cn.octopusyan.alistgui.util.alert.AlertBuilder;
-import cn.octopusyan.alistgui.util.alert.AlertUtil;
+import cn.octopusyan.alistgui.task.CheckUpdateTask;
+import cn.octopusyan.alistgui.task.listener.TaskListener;
+import cn.octopusyan.alistgui.util.DownloadUtil;
+import cn.octopusyan.alistgui.view.alert.AlertUtil;
+import cn.octopusyan.alistgui.view.alert.builder.AlertBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.zip.ZipFile;
 
 /**
  * 关于
@@ -29,7 +21,7 @@ import java.util.zip.ZipFile;
  * @author octopus_yan
  */
 @Slf4j
-public class AboutViewModule {
+public class AboutViewModule extends BaseViewModel {
     private final StringProperty aListVersion = new SimpleStringProperty(ConfigManager.aListVersion());
     private final StringProperty aListNewVersion = new SimpleStringProperty("");
     private final BooleanProperty aListUpgrade = new SimpleBooleanProperty(false);
@@ -38,7 +30,7 @@ public class AboutViewModule {
     private final BooleanProperty guiUpgrade = new SimpleBooleanProperty(false);
 
     public AboutViewModule() {
-        aListVersion.addListener((_, _, newValue) -> ConfigManager.aListVersion(newValue));
+        aListVersion.bindBidirectional(ConfigManager.aListVersionProperty());
     }
 
     public Property<String> aListVersionProperty() {
@@ -83,10 +75,12 @@ public class AboutViewModule {
             String newLabel = Context.getLanguageBinding("update.remote").get();
             String header = Context.getLanguageBinding(STR."update.upgrade.\{upgrade ? "new" : "not"}").get();
 
+            // 版本检查消息
             String msg = STR."\{app.getRepo()}\{upgrade ? "" : STR." \{version}"} \{header} \{upgrade ? newVersion : ""}";
             log.info(msg);
             ConsoleLog.info(msg);
 
+            // 弹窗
             AlertBuilder builder = upgrade ? AlertUtil.confirm() : AlertUtil.info();
             builder.title(title)
                     .header(header)
@@ -95,131 +89,50 @@ public class AboutViewModule {
                                 \{newLabel}    :   \{newVersion}
                                 """)
                     .show(() -> {
-                        if (upgrade) startDownload(app, newVersion);
+                        // 可升级，且点击了确定后，开始下载任务
+                        if (upgrade)
+                            DownloadUtil.startDownload(app, newVersion, () -> {
+                                // 下载完成后，解压并删除文件
+                                DownloadUtil.unzip(app);
+                                // 设置应用版本
+                                Platform.runLater(() -> aListVersion.setValue(aListNewVersion.getValue()));
+                            }).execute();
                     });
         });
     }
 
     private void startUpgrade(UpgradeApp app, Runnable runnable) {
         // 检查更新的任务
-        var task = new UpgradeTask(this, app);
-
-        // 加载弹窗
-        final var progress = AlertUtil.progress();
-        progress.title(Context.getLanguageBinding("proxy.test.title").get());
-        progress.onCancel(task::cancel);
+        var task = new CheckUpdateTask(app);
 
         // 任务监听
-        task.onListen(new BaseTask.Listener() {
+        task.onListen(new TaskListener.UpgradeUpgradeListener(task) {
 
             @Override
-            public void onStart() {
-                String msg = STR."start update \{app.getRepo()}...";
-                log.info(msg);
-                ConsoleLog.info(msg);
-            }
-
-            @Override
-            public void onRunning() {
-                progress.show();
-            }
-
-            @Override
-            public void onSucceeded() {
-                progress.close();
+            protected void onSucceed() {
                 if (runnable != null) runnable.run();
             }
 
             @Override
-            public void onFailed(Throwable throwable) {
-                String msg = STR."\{app.getRepo()} check version error";
-                log.error(msg, throwable);
-                ConsoleLog.error(STR."\{msg} : \{throwable.getMessage()}");
+            public void onChecked(boolean hasUpgrade, String version) {
+                // 版本检查结果
+                Platform.runLater(() -> {
+                    if (app instanceof AList) {
+                        aListUpgrade.setValue(hasUpgrade);
+                        aListNewVersion.setValue(version);
+                    } else {
+                        guiUpgrade.setValue(hasUpgrade);
+                        guiNewVersion.setValue(version);
+                    }
+                });
+            }
+
+            @Override
+            protected void onFail(Throwable throwable) {
                 AlertUtil.exception(new Exception(throwable)).show();
             }
         });
         // 执行任务
         task.execute();
-    }
-
-    /**
-     * 下载文件
-     *
-     * @param app     应用
-     * @param version 下载版本
-     */
-    private void startDownload(UpgradeApp app, String version) {
-        DownloadTask downloadTask = new DownloadTask(app.getDownloadUrl(version));
-        downloadTask.onListen(new DownloadTask.Listener() {
-
-            private volatile int lastProgress = 0;
-
-            @Override
-            public void onStart() {
-                String msg = STR."download \{app.getRepo()} start";
-                log.info(msg);
-                ConsoleLog.info(msg);
-            }
-
-            @Override
-            public void onProgress(Long total, Long progress) {
-                int a = (int) (((double) progress / total) * 100);
-                if (a % 10 == 0) {
-                    if (a != lastProgress) {
-                        lastProgress = a;
-                        String msg = STR."\{app.getRepo()} \{a} %";
-                        log.info(STR."download \{msg}");
-                        ConsoleLog.info(msg);
-                    }
-                }
-            }
-
-            @Override
-            public void onSucceeded() {
-                String msg = STR."download \{app.getRepo()} success";
-                log.info(msg);
-                ConsoleLog.info(msg);
-
-                // 解压并删除文件
-                unzip(app);
-
-                Platform.runLater(() -> aListVersion.setValue(aListNewVersion.getValue()));
-            }
-
-            @Override
-            public void onFailed(Throwable throwable) {
-                log.error("下载失败", throwable);
-                ConsoleLog.error(STR."下载失败 => \{throwable.getMessage()}");
-            }
-        });
-        downloadTask.execute();
-    }
-
-    private void unzip(UpgradeApp app) {
-        File file = new File(Constants.BIN_DIR_PATH + File.separator + app.getReleaseFile());
-        ZipFile zipFile = ZipUtil.toZipFile(file, CharsetUtil.defaultCharset());
-        ZipUtil.read(zipFile, zipEntry -> {
-            String path = zipEntry.getName();
-            if (FileUtil.isWindows()) {
-                // Win系统下
-                path = StrUtil.replace(path, "*", "_");
-            }
-
-            final File outItemFile = FileUtil.file(Constants.BIN_DIR_PATH, path);
-            if (zipEntry.isDirectory()) {
-                // 目录
-                //noinspection ResultOfMethodCallIgnored
-                outItemFile.mkdirs();
-            } else {
-                InputStream in = ZipUtil.getStream(zipFile, zipEntry);
-                // 文件
-                FileUtil.writeFromStream(in, outItemFile, false);
-
-                log.info(STR."unzip ==> \{outItemFile.getAbsoluteFile()}");
-            }
-        });
-
-        // 解压完成后删除
-        FileUtil.del(file);
     }
 }

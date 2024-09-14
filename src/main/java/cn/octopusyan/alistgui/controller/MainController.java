@@ -4,20 +4,25 @@ import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.manager.AListManager;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
-import javafx.application.Platform;
+import cn.octopusyan.alistgui.util.FxmlUtil;
+import cn.octopusyan.alistgui.viewModel.MainViewModel;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * 主界面控制器
  *
  * @author octopus_yan
  */
-public class MainController extends BaseController<VBox> {
+public class MainController extends BaseController<MainViewModel> {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @FXML
@@ -30,6 +35,10 @@ public class MainController extends BaseController<VBox> {
     public Button statusLabel;
     @FXML
     public Button startButton;
+    @FXML
+    public MenuItem browserButton;
+
+    private PasswordController controller;
 
     @Override
     public VBox getRootPanel() {
@@ -43,31 +52,18 @@ public class MainController extends BaseController<VBox> {
 
     @Override
     public void initViewStyle() {
-        AListManager.runningProperty().addListener(_ -> setStartButton(AListManager.isRunning()));
     }
 
     @Override
     public void initViewAction() {
-        AListManager.runningProperty().addListener((_, _, running) -> setStartButton(running));
+        viewModel.startBtnStyleCssProperty().bindContentBidirectional(startButton.getStyleClass());
+        viewModel.statusLabelStyleCssProperty().bindContentBidirectional(statusLabel.getStyleClass());
+        viewModel.startBtnTextProperty().bindBidirectional(startButton.textProperty());
+        viewModel.statusLabelTextProperty().bindBidirectional(statusLabel.textProperty());
+        viewModel.browserButtonDisableProperty().bindBidirectional(browserButton.disableProperty());
     }
 
-    private void setStartButton(boolean running) {
-        String removeStyle = running ? "success" : "danger";
-        String addStyle = running ? "danger" : "success";
-        String button = Context.getLanguageBinding(STR."main.control.\{running ? "stop" : "start"}").get();
-        String status = Context.getLanguageBinding(STR."main.status.label-\{running ? "running" : "stop"}").get();
-
-        Platform.runLater(() -> {
-            startButton.getStyleClass().remove(removeStyle);
-            startButton.getStyleClass().add(addStyle);
-            startButton.textProperty().set(button);
-
-            statusLabel.getStyleClass().remove(addStyle);
-            statusLabel.getStyleClass().add(removeStyle);
-            statusLabel.textProperty().set(status);
-        });
-    }
-
+    // start button
     @FXML
     public void start() {
         if (AListManager.isRunning()) {
@@ -77,8 +73,41 @@ public class MainController extends BaseController<VBox> {
         }
     }
 
+    // password button
+    @FXML
+    public void adminPassword() throws IOException {
+        if (controller == null) {
+            FXMLLoader load = FxmlUtil.load("admin-panel");
+            load.load();
+            controller = load.getController();
+        }
+        controller.show();
+    }
+
+    // restart button
     @FXML
     public void restart() {
         AListManager.restart();
+    }
+
+    // more button
+
+    @FXML
+    public void openInBrowser() {
+        AListManager.openScheme();
+    }
+
+    @FXML
+    public void openLogFolder() {
+        AListManager.openLogFolder();
+    }
+
+    @FXML
+    public void openConfig() {
+        AListManager.openConfig();
+    }
+
+    private String getText(String key) {
+        return Context.getLanguageBinding(key).get();
     }
 }

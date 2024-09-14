@@ -91,23 +91,22 @@
 #windowFooter {
   .button {
     -fx-font-size: 15;
-    -fx-background-color: transparent;
     -fx-text-alignment: CENTER;
-  }
-
-  #document {
-    -fx-text-fill: -color-success-5;
-  }
-
-  #github {
-    -fx-text-fill: -color-accent-5;
-  }
-
-  #sponsor {
-    -fx-text-fill: -color-danger-emphasis;
   }
 
   .ikonli-font-icon {
     -fx-font-size: 15;
+  }
+}
+
+/**************************************************
+ * Modal Pane
+**************************************************/
+
+.modal-pane {
+  -fx-background-radius: 15;
+
+  .scrollable-content {
+    -fx-background-radius: 15;
   }
 }

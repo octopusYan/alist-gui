@@ -1,32 +1,35 @@
 package cn.octopusyan.alistgui.controller;
 
+import atlantafx.base.controls.ModalPane;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.viewModel.RootViewModel;
 import com.gluonhq.emoji.EmojiData;
 import com.gluonhq.emoji.util.EmojiImageUtils;
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.util.Locale;
+
 /**
- * 主页面控制器
+ * Root 页面控制器
  *
  * @author octopus_yan@foxmail.com
  */
-public class RootController extends BaseController<VBox> {
-
-    private double xOffset;
-    private double yOffset;
-
+public class RootController extends BaseController<RootViewModel> {
     // 布局
     @FXML
-    private VBox rootPane;
+    private StackPane rootPane;
     @FXML
     private HBox windowHeader;
     @FXML
@@ -48,13 +51,15 @@ public class RootController extends BaseController<VBox> {
     @FXML
     public Button sponsor;
 
+    private final ModalPane modalPane = new ModalPane();
+
     /**
      * 获取根布局
      *
      * @return 根布局对象
      */
     @Override
-    public VBox getRootPanel() {
+    public StackPane getRootPanel() {
         return rootPane;
     }
 
@@ -63,7 +68,7 @@ public class RootController extends BaseController<VBox> {
      */
     @Override
     public void initData() {
-        tabPane.getSelectionModel().select(Context.getCurrentViewIndex());
+        tabPane.getSelectionModel().select(viewModel.currentViewIndexProperty().get());
     }
 
     /**
@@ -85,6 +90,16 @@ public class RootController extends BaseController<VBox> {
             ImageView juice = EmojiImageUtils.emojiView(icon, 25);
             sponsor.setGraphic(juice);
         });
+
+        getRootPanel().getChildren().add(modalPane);
+        modalPane.setId("modalPane");
+        // reset side and transition to reuse a single modal pane between different examples
+        modalPane.displayProperty().addListener((obs, old, val) -> {
+            if (!val) {
+                modalPane.setAlignment(Pos.CENTER);
+                modalPane.usePredefinedTransitionFactories(null);
+            }
+        });
     }
 
     /**
@@ -100,17 +115,29 @@ public class RootController extends BaseController<VBox> {
             getWindow().setAlwaysOnTop(newVal);
         });
 
-        windowHeader.setOnMousePressed(event -> {
-            xOffset = getWindow().getX() - event.getScreenX();
-            yOffset = getWindow().getY() - event.getScreenY();
-        });
-        windowHeader.setOnMouseDragged(event -> {
-            getWindow().setX(event.getScreenX() + xOffset);
-            getWindow().setY(event.getScreenY() + yOffset);
-        });
+        WindowsUtil.bindDragged(windowHeader);
 
-        tabPane.getSelectionModel()
-                .selectedIndexProperty()
-                .addListener((_, _, newValue) -> Context.setCurrentViewIndex(newValue));
+        viewModel.currentViewIndexProperty().bind(tabPane.getSelectionModel().selectedIndexProperty());
+    }
+
+    @FXML
+    public void openDocument() {
+        String locale = Context.getCurrentLocale().equals(Locale.ENGLISH) ? "" : "zh/";
+        Context.openUrl(STR."https://alist.nn.ci/\{locale}");
+    }
+
+    @FXML
+    public void openGithub() {
+        Context.openUrl("https://github.com/alist-org/alist");
+    }
+
+    public void showModal(Node node, boolean persistent) {
+        modalPane.show(node);
+        modalPane.setPersistent(persistent);
+    }
+
+    public void hideModal() {
+        modalPane.hide(false);
+        modalPane.setPersistent(false);
     }
 }

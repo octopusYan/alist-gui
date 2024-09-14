@@ -7,7 +7,7 @@ import cn.octopusyan.alistgui.manager.http.HttpConfig;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
 import cn.octopusyan.alistgui.util.ProcessesUtil;
-import cn.octopusyan.alistgui.util.alert.AlertUtil;
+import cn.octopusyan.alistgui.view.alert.AlertUtil;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -60,6 +60,8 @@ public class Application extends javafx.application.Application {
         logger.info("application start ...");
 
         Application.primaryStage = primaryStage;
+
+        Context.setApplication(this);
 
         // 初始化弹窗工具
         AlertUtil.initOwner(primaryStage);

@@ -2,55 +2,60 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import org.kordamp.ikonli.javafx.*?>
-<VBox fx:id="rootPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      alignment="TOP_CENTER" prefHeight="720.0" prefWidth="770.0" spacing="10.0"
-      styleClass="root-pane" stylesheets="@../css/root-view.css"
-      fx:controller="cn.octopusyan.alistgui.controller.RootController">
+<StackPane fx:id="rootPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+           prefHeight="720.0" prefWidth="770.0"
+           styleClass="root-pane" stylesheets="@../css/root-view.css"
+           fx:controller="cn.octopusyan.alistgui.controller.RootController">
 
-    <HBox fx:id="windowHeader" alignment="CENTER_RIGHT" prefWidth="Infinity" spacing="10.0">
-        <padding>
-            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-        </padding>
-        <FontIcon fx:id="alwaysOnTopIcon" styleClass="icon-button"/>
-        <FontIcon fx:id="minimizeIcon" styleClass="icon-button"/>
-        <FontIcon fx:id="closeIcon" styleClass="icon-button"/>
-    </HBox>
+    <VBox prefHeight="720.0" prefWidth="770.0" spacing="10.0">
 
-    <TabPane fx:id="tabPane" prefWidth="Infinity" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
-        <padding>
-            <Insets left="20.0" right="20.0"/>
-        </padding>
-        <Tab text="%root.tab.main">
-            <graphic>
-                <FontIcon iconColor="white" iconLiteral="fa-th-large"/>
-            </graphic>
-            <!-- 引入主页 -->
-            <fx:include fx:id="mainController" source="main-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
-        </Tab>
-        <Tab text="%root.tab.setup">
-            <graphic>
-                <FontIcon iconColor="white" iconLiteral="fa-cog"/>
-            </graphic>
-            <!-- 引入设置页 -->
-            <fx:include fx:id="setupController" source="setup-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
-        </Tab>
-        <Tab text="%root.tab.about">
-            <graphic>
-                <FontIcon iconColor="white" iconLiteral="fa-info-circle"/>
-            </graphic>
-            <!-- 引入关于页 -->
-            <fx:include fx:id="aboutController" source="about-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
-        </Tab>
-    </TabPane>
-    <HBox fx:id="windowFooter" alignment="CENTER" prefWidth="Infinity" spacing="25.0">
-        <padding>
-            <Insets bottom="30.0"/>
-        </padding>
-        <Button fx:id="document" text="%root.foot.doc"/>
-        <Button fx:id="github" text="%root.foot.github"/>
-        <Button fx:id="sponsor" text="%root.foot.sponsor"/>
-    </HBox>
-</VBox>
+        <HBox fx:id="windowHeader" alignment="CENTER_RIGHT" prefWidth="Infinity" spacing="10.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+            </padding>
+            <FontIcon fx:id="alwaysOnTopIcon" styleClass="icon-button"/>
+            <FontIcon fx:id="minimizeIcon" styleClass="icon-button"/>
+            <FontIcon fx:id="closeIcon" styleClass="icon-button"/>
+        </HBox>
+
+        <TabPane fx:id="tabPane" prefWidth="Infinity" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+            <padding>
+                <Insets left="20.0" right="20.0"/>
+            </padding>
+            <Tab text="%root.tab.main">
+                <graphic>
+                    <FontIcon iconColor="white" iconLiteral="fa-th-large"/>
+                </graphic>
+                <!-- 引入主页 -->
+                <fx:include fx:id="mainController" source="main-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
+            </Tab>
+            <Tab text="%root.tab.setup">
+                <graphic>
+                    <FontIcon iconColor="white" iconLiteral="fa-cog"/>
+                </graphic>
+                <!-- 引入设置页 -->
+                <fx:include fx:id="setupController" source="setup-view.fxml" prefWidth="Infinity"
+                            prefHeight="-Infinity"/>
+            </Tab>
+            <Tab text="%root.tab.about">
+                <graphic>
+                    <FontIcon iconColor="white" iconLiteral="fa-info-circle"/>
+                </graphic>
+                <!-- 引入关于页 -->
+                <fx:include fx:id="aboutController" source="about-view.fxml" prefWidth="Infinity"
+                            prefHeight="-Infinity"/>
+            </Tab>
+        </TabPane>
+        <HBox fx:id="windowFooter" alignment="CENTER" prefWidth="Infinity" spacing="25.0">
+            <padding>
+                <Insets bottom="30.0"/>
+            </padding>
+            <Button fx:id="document" onAction="#openDocument" styleClass="success, flat" text="%root.foot.doc"/>
+            <Button fx:id="github" onAction="#openGithub" styleClass="accent, flat" text="%root.foot.github"/>
+            <Button fx:id="sponsor" styleClass="danger, flat" text="%root.foot.sponsor"
+                    visible="false" managed="false"/>
+        </HBox>
+    </VBox>
+</StackPane>

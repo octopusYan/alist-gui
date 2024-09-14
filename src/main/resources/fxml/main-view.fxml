@@ -5,13 +5,14 @@
 <?import javafx.scene.layout.*?>
 <VBox fx:id="mainView" prefHeight="700" prefWidth="720" stylesheets="@../css/main-view.css"
       xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
+      alignment="TOP_CENTER"
       fx:controller="cn.octopusyan.alistgui.controller.MainController">
     <padding>
         <Insets left="10.0" right="10.0" top="10.0"/>
     </padding>
     <HBox alignment="TOP_CENTER" prefWidth="Infinity">
         <Label fx:id="homeLabel" alignment="CENTER" text="AList GUI"/>
-        <Button fx:id="statusLabel" styleClass="success" alignment="TOP_CENTER" text="%main.status.label-running">
+        <Button fx:id="statusLabel" styleClass="danger" alignment="TOP_CENTER" text="%main.status.label-stop">
             <HBox.margin>
                 <Insets left="-10.0" top="-5"/>
             </HBox.margin>
@@ -24,12 +25,19 @@
         <VBox.margin>
             <Insets bottom="10.0" top="10.0"/>
         </VBox.margin>
-        <Button fx:id="startButton" styleClass="large, control-menu, success" onAction="#start"
+        <Button fx:id="startButton" onAction="#start" styleClass="control-menu, success"
                 text="%main.control.start"/>
-        <Button fx:id="passwordButton" styleClass="large, control-menu, success" text="%main.control.password"/>
-        <Button fx:id="restartButton" styleClass="large, control-menu, success" onAction="#restart"
+        <Button fx:id="passwordButton" onAction="#adminPassword" styleClass="control-menu, success"
+                text="%main.control.password"/>
+        <Button fx:id="restartButton" onAction="#restart" styleClass="control-menu, success"
                 text="%main.control.restart"/>
-        <Button fx:id="moreButton" styleClass="large, control-menu, button-outlined" text="%main.control.more"/>
+        <MenuButton fx:id="moreButton" styleClass="button-outlined, no-arrow" text="%main.control.more">
+            <items>
+                <MenuItem fx:id="browserButton" onAction="#openInBrowser" disable="true" text="%main.more.browser"/>
+                <MenuItem onAction="#openConfig" text="%main.more.open-config"/>
+                <MenuItem onAction="#openLogFolder" text="%main.more.open-log"/>
+            </items>
+        </MenuButton>
     </HBox>
     <ScrollPane fx:id="logAreaSp" fitToWidth="true" prefHeight="499.0" prefWidth="Infinity"
                 styleClass="logArea" VBox.vgrow="ALWAYS">

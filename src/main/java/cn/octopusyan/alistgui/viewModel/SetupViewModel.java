@@ -1,14 +1,14 @@
 package cn.octopusyan.alistgui.viewModel;
 
 import atlantafx.base.theme.Theme;
-import cn.octopusyan.alistgui.base.BaseTask;
+import cn.octopusyan.alistgui.base.BaseViewModel;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.task.ProxyCheckTask;
-import cn.octopusyan.alistgui.util.alert.AlertUtil;
-import javafx.application.Platform;
+import cn.octopusyan.alistgui.task.listener.TaskListener;
+import cn.octopusyan.alistgui.view.alert.AlertUtil;
 import javafx.beans.property.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +21,7 @@ import java.util.Locale;
  * @author octopus_yan
  */
 @Slf4j
-public class SetupViewModel {
+public class SetupViewModel extends BaseViewModel {
     private final BooleanProperty autoStart = new SimpleBooleanProperty(ConfigManager.autoStart());
     private final BooleanProperty silentStartup = new SimpleBooleanProperty(ConfigManager.silentStartup());
     private final ObjectProperty<Theme> theme = new SimpleObjectProperty<>(ConfigManager.theme());
@@ -96,24 +96,15 @@ public class SetupViewModel {
 
     private static ProxyCheckTask getProxyCheckTask(String checkUrl) {
         var task = new ProxyCheckTask(checkUrl);
-        final var progress = AlertUtil.progress();
-        progress.title(Context.getLanguageBinding("proxy.test.title").get());
-        task.onListen(new BaseTask.Listener() {
+        task.onListen(new TaskListener(task) {
 
             @Override
-            public void onRunning() {
-                progress.onCancel(task::cancel).show();
-            }
-
-            @Override
-            public void onSucceeded() {
-                Platform.runLater(progress::close);
+            public void onSucceed() {
                 AlertUtil.info(Context.getLanguageBinding("proxy.test.result.success").getValue()).show();
             }
 
             @Override
-            public void onFailed(Throwable throwable) {
-                Platform.runLater(progress::close);
+            public void onFail(Throwable throwable) {
                 final var tmp = Context.getLanguageBinding("proxy.test.result.failed").getValue();
                 String throwableMessage = throwable.getMessage();
                 AlertUtil.error(tmp + (StringUtils.isEmpty(throwableMessage) ? "" : throwableMessage)).show();

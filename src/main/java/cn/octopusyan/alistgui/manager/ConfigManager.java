@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import javafx.application.Platform;
+import javafx.beans.property.StringProperty;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class ConfigManager {
         guiConfig = loadConfig(Constants.GUI_CONFIG_PATH, GuiConfig.class);
     }
 
-    private static <T> T loadConfig(String path, Class<T> clazz) {
+    public static <T> T loadConfig(String path, Class<T> clazz) {
         File src = new File(path);
         try {
             if (!src.exists()) {
@@ -250,8 +251,12 @@ public class ConfigManager {
         return aList().getVersion();
     }
 
+    public static StringProperty aListVersionProperty() {
+        return aList().versionProperty();
+    }
+
     public static void aListVersion(String version) {
-        aList().setVersion(version);
+        aListVersionProperty().set(version);
     }
 
     public static Gui gui() {

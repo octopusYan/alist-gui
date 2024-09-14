@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.exec.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,20 +15,12 @@ import java.util.Set;
 @Slf4j
 public class ProcessesUtil {
     private static final String NEW_LINE = System.lineSeparator();
+    private static final int EXIT_VALUE = 1;
 
     private final Executor executor = DefaultExecutor.builder().get();
     private final ShutdownHookProcessDestroyer processDestroyer;
-    private DefaultExecuteResultHandler handler;
-    private final PumpStreamHandler streamHandler;
     private OnExecuteListener listener;
     private CommandLine commandLine;
-    private final LogOutputStream logout = new LogOutputStream() {
-        @Override
-        protected void processLine(String line, int logLevel) {
-            if (listener != null)
-                listener.onExecute(line + NEW_LINE);
-        }
-    };
 
     private static final Set<ProcessesUtil> set = new HashSet<>();
 
@@ -37,10 +28,17 @@ public class ProcessesUtil {
      * Prevent construction.
      */
     private ProcessesUtil(String workingDirectory) {
-        streamHandler = new PumpStreamHandler(logout, logout);
+        LogOutputStream logout = new LogOutputStream() {
+            @Override
+            protected void processLine(String line, int logLevel) {
+                if (listener != null)
+                    listener.onExecute(line + NEW_LINE);
+            }
+        };
+        PumpStreamHandler streamHandler = new PumpStreamHandler(logout, logout);
         executor.setStreamHandler(streamHandler);
         executor.setWorkingDirectory(new File(workingDirectory));
-        executor.setExitValue(1);
+        executor.setExitValue(EXIT_VALUE);
         processDestroyer = new ShutdownHookProcessDestroyer();
         executor.setProcessDestroyer(processDestroyer);
     }
@@ -51,20 +49,25 @@ public class ProcessesUtil {
         return util;
     }
 
-    public boolean exec(String command) throws IOException {
+    public boolean exec(String command) {
         commandLine = CommandLine.parse(command);
-        int execute = executor.execute(commandLine);
-        return 0 == execute;
+        int execute = 0;
+        try {
+            execute = executor.execute(commandLine);
+        } catch (Exception e) {
+            log.error("exec", e);
+        }
+        return execute == EXIT_VALUE;
     }
 
     public void exec(String command, OnExecuteListener listener) {
         this.listener = listener;
         commandLine = CommandLine.parse(command);
-        handler = new DefaultExecuteResultHandler() {
+        DefaultExecuteResultHandler handler = new DefaultExecuteResultHandler() {
             @Override
             public void onProcessComplete(int exitValue) {
                 if (listener != null) {
-                    listener.onExecuteSuccess(exitValue);
+                    listener.onExecuteSuccess(exitValue == EXIT_VALUE);
                 }
             }
 
@@ -77,7 +80,7 @@ public class ProcessesUtil {
         };
         try {
             executor.execute(commandLine, handler);
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (listener != null) listener.onExecuteError(e);
         }
     }
@@ -87,6 +90,10 @@ public class ProcessesUtil {
         processDestroyer.run();
     }
 
+    public boolean isRunning() {
+        return !processDestroyer.isEmpty();
+    }
+
     public static void destroyAll() {
         set.forEach(ProcessesUtil::destroy);
     }
@@ -94,7 +101,7 @@ public class ProcessesUtil {
     public interface OnExecuteListener {
         void onExecute(String msg);
 
-        default void onExecuteSuccess(int exitValue) {
+        default void onExecuteSuccess(boolean success) {
         }
 
         default void onExecuteError(Exception e) {

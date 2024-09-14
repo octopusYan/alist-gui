@@ -1,9 +1,9 @@
-package cn.octopusyan.alistgui.util.alert;
+package cn.octopusyan.alistgui.view.alert.builder;
 
+import cn.octopusyan.alistgui.base.BaseBuilder;
 import javafx.scene.control.ChoiceDialog;
 import javafx.stage.Window;
 
-import java.util.Collection;
 import java.util.Optional;
 
 /**

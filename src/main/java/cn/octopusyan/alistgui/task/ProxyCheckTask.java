@@ -14,6 +14,7 @@ public class ProxyCheckTask extends BaseTask {
     private final String checkUrl;
 
     public ProxyCheckTask(String checkUrl) {
+        super(STR."ProxyCheck[\{checkUrl}]");
         this.checkUrl = checkUrl;
         this.updateProgress(0d, 1d);
     }

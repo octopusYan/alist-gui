@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import atlantafx.base.layout.InputGroup?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+<AnchorPane id="admin-panel" fx:id="adminPanel" maxHeight="250" maxWidth="520" prefHeight="250.0" prefWidth="520.0"
+            stylesheets="@../css/admin-panel.css" xmlns="http://javafx.com/javafx/11.0.14-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="cn.octopusyan.alistgui.controller.PasswordController">
+
+    <AnchorPane styleClass="header" prefWidth="520" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0"
+                AnchorPane.topAnchor="0">
+        <Label text="%admin.pwd.title" AnchorPane.leftAnchor="10" AnchorPane.topAnchor="10"/>
+        <Button onAction="#close" styleClass="flat" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+            <graphic>
+                <FontIcon iconLiteral="fa-remove"/>
+            </graphic>
+        </Button>
+    </AnchorPane>
+
+    <VBox alignment="CENTER" spacing="10" AnchorPane.bottomAnchor="30" AnchorPane.leftAnchor="0"
+          AnchorPane.rightAnchor="0">
+
+        <Label style="-fx-background-radius: 10;-fx-background-color: -color-button-bg-hover;"
+               styleClass="button, flat, danger" text="%admin.pwd.toptip"/>
+
+        <HBox alignment="CENTER" styleClass="admin-field">
+            <Label text="%admin.pwd.user-field"/>
+            <InputGroup fx:id="userField" styleClass="admin-field-value">
+                <TextField fx:id="usernameField" text="admin" editable="false"/>
+                <Button fx:id="copyUsername" onAction="#copyUsername">
+                    <graphic>
+                        <FontIcon iconLiteral="fa-copy"/>
+                    </graphic>
+                </Button>
+            </InputGroup>
+        </HBox>
+
+        <HBox alignment="CENTER" styleClass="admin-field">
+            <Label text="%admin.pwd.pwd-field"/>
+            <InputGroup styleClass="admin-field-value">
+                <PasswordField fx:id="passwordField" editable="false"/>
+                <Button fx:id="refreshPassword" onAction="#savePassword" visible="false" managed="false">
+                    <graphic>
+                        <FontIcon iconLiteral="fa-refresh"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="savePassword" onAction="#savePassword" visible="false" managed="false">
+                    <graphic>
+                        <FontIcon iconLiteral="fa-save"/>
+                    </graphic>
+                </Button>
+                <Button fx:id="copyPassword" onAction="#copyPassword">
+                    <graphic>
+                        <FontIcon iconLiteral="fa-copy"/>
+                    </graphic>
+                </Button>
+            </InputGroup>
+        </HBox>
+
+    </VBox>
+
+</AnchorPane>

@@ -1,10 +1,12 @@
 /**************************************************
  * Root
 **************************************************/
+.root {
+  -fx-font-size: 15;
+  -fx-font-weight: bolder;
+}
 
 .root-pane {
-  -fx-font-size: 15;
-  -fx-font-weight: normal;
 
   -fx-background-radius: 15;
   -fx-border-radius: 15;

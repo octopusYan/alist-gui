@@ -1,5 +1,6 @@
-package cn.octopusyan.alistgui.util.alert;
+package cn.octopusyan.alistgui.view.alert;
 
+import cn.octopusyan.alistgui.view.alert.builder.*;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
@@ -15,6 +16,10 @@ public class AlertUtil {
 
     public static void initOwner(Stage stage) {
         AlertUtil.mOwner = stage;
+    }
+
+    public static DefaultBuilder builder() {
+        return new DefaultBuilder(mOwner);
     }
 
     public static AlertBuilder info(String content) {

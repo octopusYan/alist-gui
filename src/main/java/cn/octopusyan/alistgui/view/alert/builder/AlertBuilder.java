@@ -1,5 +1,7 @@
-package cn.octopusyan.alistgui.util.alert;
+package cn.octopusyan.alistgui.view.alert.builder;
 
+import cn.octopusyan.alistgui.base.BaseBuilder;
+import cn.octopusyan.alistgui.view.alert.AlertUtil;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;

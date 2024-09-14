@@ -2,15 +2,18 @@ package cn.octopusyan.alistgui.base;
 
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Context;
-import cn.octopusyan.alistgui.manager.WindowsUtil;
 import cn.octopusyan.alistgui.util.FxmlUtil;
+import cn.octopusyan.alistgui.util.WindowsUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,19 +22,34 @@ import java.util.ResourceBundle;
  *
  * @author octopus_yan@foxmail.com
  */
-public abstract class BaseController<P extends Pane> implements Initializable {
+public abstract class BaseController<VM extends BaseViewModel> implements Initializable {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Getter
+    protected final VM viewModel;
 
     public BaseController() {
         //初始化时保存当前Controller实例
         Context.getControllers().put(this.getClass().getSimpleName(), this);
+
+        // view model
+        VM vm = null;
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType type) {
+            Class<VM> clazz = (Class<VM>) type.getActualTypeArguments()[0];
+            try {
+                vm = clazz.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                logger.error("", e);
+            }
+        }
+        viewModel = vm;
     }
 
     @FXML
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // 全局窗口拖拽
-        if (dragWindow()) {
+        if (dragWindow() && getRootPanel() != null) {
             // 窗口拖拽
             WindowsUtil.bindDragged(getRootPanel());
         }
@@ -60,7 +78,7 @@ public abstract class BaseController<P extends Pane> implements Initializable {
      *
      * @return 根布局对象
      */
-    public abstract P getRootPanel();
+    public abstract Pane getRootPanel();
 
     /**
      * 获取根布局
