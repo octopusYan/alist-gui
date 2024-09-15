@@ -2,12 +2,14 @@ package cn.octopusyan.alistgui.viewModel;
 
 import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.base.BaseViewModel;
+import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.task.ProxyCheckTask;
 import cn.octopusyan.alistgui.task.listener.TaskListener;
+import cn.octopusyan.alistgui.util.Registry;
 import cn.octopusyan.alistgui.view.alert.AlertUtil;
 import javafx.beans.property.*;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +37,19 @@ public class SetupViewModel extends BaseViewModel {
     public SetupViewModel() {
         theme.bindBidirectional(Context.themeProperty());
         theme.addListener((_, _, newValue) -> ConfigManager.theme(newValue));
-        autoStart.addListener((_, _, newValue) -> ConfigManager.autoStart(newValue));
         silentStartup.addListener((_, _, newValue) -> ConfigManager.silentStartup(newValue));
+        autoStart.addListener((_, _, newValue) -> {
+            try {
+                if (newValue) {
+                    Registry.setStringValue(Registry.Root.HKCU, Constants.REG_AUTO_RUN, Constants.APP_TITLE, Constants.APP_EXE);
+                } else {
+                    Registry.deleteValue(Registry.Root.HKCU, Constants.REG_AUTO_RUN, Constants.APP_TITLE);
+                }
+            } catch (Throwable e) {
+                log.error("", e);
+            }
+            ConfigManager.autoStart(newValue);
+        });
         proxySetup.addListener((_, _, newValue) -> ConfigManager.proxySetup(newValue));
         proxyTestUrl.addListener((_, _, newValue) -> ConfigManager.proxyTestUrl(newValue));
         proxyHost.addListener((_, _, newValue) -> ConfigManager.proxyHost(newValue));
