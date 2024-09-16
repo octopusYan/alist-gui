@@ -189,12 +189,16 @@ public class ConfigManager {
     }
 
     public static void checkProxy(BiConsumer<Boolean, String> consumer) {
+        if (ProxySetup.SYSTEM.equals(proxySetup())) {
+            consumer.accept(true, "");
+            return;
+        }
         if (!hasProxy()) return;
 
         ThreadPoolManager.getInstance().execute(() -> {
             try {
                 InetSocketAddress address = NetUtil.createAddress(proxyHost(), getProxyPort());
-                if (NetUtil.isOpen(address, 5000)) {
+                if (NetUtil.isOpen(address, 1000)) {
                     Platform.runLater(() -> consumer.accept(true, "success"));
                 } else {
                     Platform.runLater(() -> consumer.accept(false, "connection timed out"));

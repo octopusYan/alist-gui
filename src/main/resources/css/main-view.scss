@@ -23,18 +23,16 @@
 }
 
 #startButton {
-  -color-button-bg-hover: -color-button-bg;
   -color-button-bg-focused: -color-button-bg;
   -fx-border-color: -color-button-bg;
-  -fx-border-color-hover: -color-button-bg;
 }
 
 #passwordButton {
   -color-button-bg: -color-success-3;
   -color-button-bg-hover: -color-button-bg;
-  -color-button-bg-focused: -color-success-3;
+  -color-button-bg-focused: -color-button-bg;
   -color-button-bg-pressed: -color-button-bg;
-  -fx-border-color: -color-success-3;
+  -fx-border-color: -color-button-bg;
 }
 
 #restartButton {

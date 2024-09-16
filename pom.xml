@@ -101,12 +101,14 @@
             <version>${hutool.version}</version>
         </dependency>
 
+        <!-- lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
         </dependency>
 
+        <!-- jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
@@ -253,7 +255,11 @@
                     <generateInstaller>false</generateInstaller>
                     <copyDependencies>true</copyDependencies>
                     <assetsDir>${project.basedir}/src/main/resources/assets</assetsDir>
-                    <vmArgs>--enable-preview</vmArgs>
+                    <vmArgs>
+                        <arg>--enable-preview</arg>
+                        <arg>-Xmx100m</arg>
+<!--                        <arg>-Djava.awt.headless=false</arg>-->
+                    </vmArgs>
                 </configuration>
                 <executions>
                     <execution>

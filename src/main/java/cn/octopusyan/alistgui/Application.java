@@ -97,7 +97,7 @@ public class Application extends javafx.application.Application {
 
     private void showErrorDialog(Thread t, Throwable e) {
         logger.error("", e);
-        AlertUtil.exception(new Exception(e)).show();
+        Platform.runLater(() -> AlertUtil.exception(new Exception(e)).show());
     }
 
     @Override

@@ -115,7 +115,7 @@ public class SetupViewModel extends BaseViewModel {
         ConfigManager.checkProxy((success, msg) -> {
             if (!success) {
                 final var tmp = Context.getLanguageBinding("proxy.test.result.failed").getValue();
-                AlertUtil.error(STR."\{tmp}:\{msg}").show();
+                AlertUtil.error(STR."\{tmp}\{msg}").show();
                 return;
             }
 

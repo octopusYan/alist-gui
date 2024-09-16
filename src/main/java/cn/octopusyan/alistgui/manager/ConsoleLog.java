@@ -129,7 +129,7 @@ public class ConsoleLog {
         String regex = STR.".*(\{AListManager.scheme()}|\{URL_IP_REX}).*";
         if (ReUtil.isMatch(regex, message)) {
             String text = ReUtil.get(regex, message, 1);
-            String url = text.startsWith("http") ? STR."http://\{text}" : text;
+            String url = text.startsWith("http") ? text : STR."http://\{text}";
             url = url.replace("0.0.0.0", "127.0.0.1");
             message = message.replace(text, STR."[url=\{url}]\{text}[/url]");
         }
