@@ -3,10 +3,13 @@ package cn.octopusyan.alistgui.controller;
 import atlantafx.base.controls.ModalPane;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.manager.ConfigManager;
+import cn.octopusyan.alistgui.manager.SystemTrayManager;
 import cn.octopusyan.alistgui.util.WindowsUtil;
 import cn.octopusyan.alistgui.viewModel.RootViewModel;
 import com.gluonhq.emoji.EmojiData;
 import com.gluonhq.emoji.util.EmojiImageUtils;
+import javafx.application.Platform;
 import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -107,7 +110,15 @@ public class RootController extends BaseController<RootViewModel> {
      */
     @Override
     public void initViewAction() {
-        closeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> getWindow().close());
+        closeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> {
+            if (ConfigManager.closeToTray()) {
+                SystemTrayManager.show();
+            } else {
+                SystemTrayManager.hide();
+            }
+            Platform.setImplicitExit(!ConfigManager.closeToTray());
+            getWindow().close();
+        });
         minimizeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> getWindow().setIconified(true));
         alwaysOnTopIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> {
             boolean newVal = !getWindow().isAlwaysOnTop();

@@ -3,6 +3,7 @@ package cn.octopusyan.alistgui;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.manager.ConfigManager;
+import cn.octopusyan.alistgui.manager.SystemTrayManager;
 import cn.octopusyan.alistgui.manager.http.HttpConfig;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import cn.octopusyan.alistgui.manager.thread.ThreadPoolManager;
@@ -83,6 +84,13 @@ public class Application extends javafx.application.Application {
         Scene scene = Context.initScene();
         primaryStage.setScene(scene);
         primaryStage.show();
+
+        // 静默启动
+        if (ConfigManager.silentStartup()) {
+            Platform.setImplicitExit(false);
+            primaryStage.hide();
+            SystemTrayManager.show();
+        }
 
         logger.info("application start over ...");
     }

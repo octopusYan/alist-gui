@@ -37,6 +37,8 @@ public class SetupController extends BaseController<SetupViewModel> implements I
     @FXML
     public CheckBox silentStartupCheckBox;
     @FXML
+    public CheckBox closeToTrayCheckBox;
+    @FXML
     public ComboBox<Locale> languageComboBox;
     @FXML
     public ComboBox<Theme> themeComboBox;
@@ -92,6 +94,7 @@ public class SetupController extends BaseController<SetupViewModel> implements I
         //
         autoStartCheckBox.selectedProperty().bindBidirectional(viewModel.autoStartProperty());
         silentStartupCheckBox.selectedProperty().bindBidirectional(viewModel.silentStartupProperty());
+        closeToTrayCheckBox.selectedProperty().bindBidirectional(viewModel.closeToTrayProperty());
         proxyHost.textProperty().bindBidirectional(viewModel.proxyHostProperty());
         proxyPort.textProperty().bindBidirectional(viewModel.proxyPortProperty());
 

@@ -18,6 +18,7 @@ public class GuiConfig {
 
     private Boolean autoStart = false;
     private Boolean silentStartup = false;
+    private Boolean closeToTray = true;
     @JsonProperty("proxy")
     private ProxyInfo proxyInfo;
     @JsonProperty("proxy.testUrl")

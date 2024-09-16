@@ -2,17 +2,25 @@ package cn.octopusyan.alistgui.util;
 
 import cn.octopusyan.alistgui.Application;
 import javafx.scene.layout.Pane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 工具
+ *
  * @author octopus_yan
  */
 public class WindowsUtil {
-    public static final Map<Pane, Double> paneXOffset = new HashMap<>();
-    public static final Map<Pane, Double> paneYOffset = new HashMap<>();
+    // 获取系统缩放比
+    public static final double scaleX = Screen.getPrimary().getOutputScaleX();
+    public static final double scaleY = Screen.getPrimary().getOutputScaleY();
+
+
+    private static final Map<Pane, Double> paneXOffset = new HashMap<>();
+    private static final Map<Pane, Double> paneYOffset = new HashMap<>();
 
     public static void bindShadow(Pane pane) {
         pane.setStyle("""
@@ -29,6 +37,13 @@ public class WindowsUtil {
         bindDragged(pane, stage);
     }
 
+    public static void unbindDragged(Pane pane) {
+        pane.setOnMousePressed(null);
+        pane.setOnMouseDragged(null);
+        paneXOffset.remove(pane);
+        paneYOffset.remove(pane);
+    }
+
     public static void bindDragged(Pane pane, Stage stage) {
         pane.setOnMousePressed(event -> {
             paneXOffset.put(pane, stage.getX() - event.getScreenX());
@@ -40,11 +55,15 @@ public class WindowsUtil {
         });
     }
 
+    public static Stage getStage() {
+        return Application.getPrimaryStage();
+    }
+
     public static Stage getStage(Pane pane) {
         try {
             return (Stage) pane.getScene().getWindow();
         } catch (Throwable e) {
-            return Application.getPrimaryStage();
+            return getStage();
         }
     }
 }

@@ -237,6 +237,16 @@ public class ConfigManager {
         guiConfig.setSilentStartup(startup);
     }
 
+// --------------------------------{ 最小化到托盘 }------------------------------------------
+
+    public static boolean closeToTray() {
+        return guiConfig.getCloseToTray();
+    }
+
+    public static void closeToTray(boolean check) {
+        guiConfig.setCloseToTray(check);
+    }
+
 // --------------------------------{ 版本检查 }------------------------------------------
 
     public static UpgradeConfig upgradeConfig() {
