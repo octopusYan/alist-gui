@@ -1,0 +1,154 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches-ignore:
+      - "master"
+    paths:
+      - ".github/workflows/*.yml"
+      - "src/**"
+      - "pom.xml"
+      - "!**/*.md"
+  pull_request:
+    branches:
+      - "dev"
+    paths:
+      - ".github/workflows/*.yml"
+      - "src/**"
+      - "pom.xml"
+      - "!**/*.md"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  meta:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.set_tag.outputs.tag }}
+      prerelease: ${{ steps.set_pre.outputs.prerelease }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: temp
+          show-progress: false
+
+      - name: Fetch history
+        if: ${{ !startsWith(github.ref, 'refs/pull/') }}
+        run: |
+          git init
+          cp $GITHUB_WORKSPACE/temp/.git/config ./.git
+          rm -rf $GITHUB_WORKSPACE/temp
+          # git config remote.origin.fetch '+refs/*:refs/*'
+          git fetch --filter=tree:0 # --update-head-ok
+          git reset --hard origin/$(git branch --show-current) || true
+          git checkout ${{ github.ref_name }}
+
+      - name: Set tag
+        id: set_tag
+        run: |
+          ${{ startsWith(github.ref, 'refs/pull/') && 'cd temp' || '' }}
+          echo tag=$(git describe --tags --match "v*" ${{ github.ref }} || git rev-parse --short HEAD) | tee -a $GITHUB_OUTPUT
+          exit ${PIPESTATUS[0]}
+
+      - name: Judge pre-release
+        id: set_pre
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          if [[ '${{ steps.set_tag.outputs.tag }}' =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo prerelease=false | tee -a $GITHUB_OUTPUT
+          else
+            echo prerelease=true | tee -a $GITHUB_OUTPUT
+          fi
+
+#      - name: Set up Node.js
+#        uses: actions/setup-node@v4
+#        with:
+#          node-version: 14
+#
+#      - name: Install dependencies
+#        run: npm install conventional-changelog-cli
+
+      - name: Generate Changelog
+        run: |
+          this_tag=${{ steps.set_tag.outputs.tag }}
+          if [[ '${{ steps.set_pre.outputs.prerelease }}' != 'false' ]]; then
+            last_tag=$(git describe --tags --match "v*" --abbrev=0 --exclude='${{ steps.set_tag.outputs.tag }}')
+          else
+            last_tag=$(git describe --tags --match "v*" --abbrev=0 --exclude='${{ steps.set_tag.outputs.tag }}' --exclude='*-*')
+          fi
+          echo >> CHANGELOG.md
+          echo "**Full Changelog**: [$last_tag -> $this_tag](https://github.com/octopusYan/alist-gui/compare/${last_tag}...${this_tag})" >> CHANGELOG.md
+
+      - name: Upload changelog to Github
+        uses: actions/upload-artifact@v4
+        if: ${{ startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          name: changelog
+          path: CHANGELOG.md
+
+  windows:
+    needs: meta
+    strategy:
+      matrix:
+        include:
+          - msbuild_target: x64
+            lowercase_target: x64
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          show-progress: false
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: 'dragonwell'
+          architecture: x64
+          cache: maven
+
+      - name: Build with Maven
+        run: |
+          mvn clean package -f pom.xml
+          mkdir zipball && cp target/*-windows.zip zipball
+
+      - name: Upload AListGUI to Github
+        uses: actions/upload-artifact@v4
+        with:
+          name: AListGUI-windows
+          path: zipball
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [ meta, windows ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Download AListGUI from Github
+        uses: actions/download-artifact@v4
+        with:
+          path: assets
+
+      - name: Cleanup files
+        run: |
+          mv -vf assets/changelog/* .
+          cd assets
+          find . -type f | while read f; do mv -fvt . $f; done
+
+      - name: Release to Github
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          files: |
+            assets/*
+          prerelease: ${{ needs.meta.outputs.prerelease != 'false' }}
