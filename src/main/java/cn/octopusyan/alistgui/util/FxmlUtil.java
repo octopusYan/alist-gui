@@ -25,7 +25,7 @@ public class FxmlUtil {
                 FxmlUtil.class.getResource(prefix + name + suffix),
                 bundle,
                 new JavaFXBuilderFactory(),
-                null,
+                Context.getControlFactory(),
                 StandardCharsets.UTF_8
         );
     }

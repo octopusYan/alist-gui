@@ -151,12 +151,6 @@ public class Context {
     }
 
     /**
-     * 初始化 语言
-     */
-    private static void initI18n() {
-    }
-
-    /**
      * 有此类所在路径决定相对路径
      *
      * @param path 资源文件相对路径
@@ -183,7 +177,6 @@ public class Context {
     private static void loadScene() {
         try {
             FXMLLoader loader = FxmlUtil.load("root-view");
-            loader.setControllerFactory(Context.getControlFactory());
             //底层面板
             Pane root = loader.load();
             Optional.ofNullable(scene).ifPresentOrElse(

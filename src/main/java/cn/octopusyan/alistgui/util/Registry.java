@@ -43,7 +43,6 @@ public class Registry {
         RESTORE,
         SAVE,
         UNLOAD,
-        ;
     }
 
     public enum Root {
@@ -75,6 +74,5 @@ public class Registry {
         REG_LINK,
         REG_FULL_RESOURCE_DESCRIPTOR,
         REG_EXPAND_SZ,
-        ;
     }
 }
