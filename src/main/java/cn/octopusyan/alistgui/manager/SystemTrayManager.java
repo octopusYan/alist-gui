@@ -76,7 +76,7 @@ public class SystemTrayManager {
             return;
         }
 
-        initTrayIcon();
+        initTrayIcon(AListManager.isRunning());
 
         try {
             if (!isShowing())
@@ -95,11 +95,12 @@ public class SystemTrayManager {
 
 //========================================={ private }===========================================
 
-    private static void initTrayIcon() {
+    private static void initTrayIcon(boolean running) {
         if (trayIcon != null) return;
 
         // 系统托盘图标
-        Image image = Toolkit.getDefaultToolkit().getImage(WindowsUtil.class.getResource("/assets/logo-disabled.png"));
+        URL resource = WindowsUtil.class.getResource(STR."/assets/logo\{running ? "" : "-disabled"}.png");
+        Image image = Toolkit.getDefaultToolkit().getImage(resource);
         trayIcon = new TrayIcon(image);
 
         // 设置图标尺寸自动适应
@@ -129,7 +130,7 @@ public class SystemTrayManager {
                 if (event.isPopupTrigger()) {
                     // 弹出菜单
                     Platform.runLater(() -> {
-                        initPopupMenu();
+                        initPopupMenu(running);
                         popupMenu.show(event);
                     });
                 } else if (event.getButton() == MouseEvent.BUTTON1) {
@@ -143,12 +144,15 @@ public class SystemTrayManager {
     /**
      * 构建托盘菜单
      */
-    private static void initPopupMenu() {
+    private static void initPopupMenu(boolean running) {
         if (popupMenu != null) return;
 
-        MenuItem start = PopupMenu.menuItem(getString("main.control.start"), _ -> AListManager.openScheme());
+        MenuItem start = PopupMenu.menuItem(
+                getString(STR."main.control.\{running ? "stop" : "start"}"),
+                _ -> AListManager.openScheme()
+        );
         MenuItem browser = PopupMenu.menuItem(getString("main.more.browser"), _ -> AListManager.openScheme());
-        browser.setDisable(true);
+        browser.setDisable(!running);
 
         AListManager.runningProperty().addListener((_, _, newValue) -> {
             start.setText(getString(STR."main.control.\{newValue ? "stop" : "start"}"));
