@@ -34,8 +34,8 @@
         <MenuButton fx:id="moreButton" styleClass="button-outlined, no-arrow" text="%main.control.more">
             <items>
                 <MenuItem fx:id="browserButton" onAction="#openInBrowser" disable="true" text="%main.more.browser"/>
-                <MenuItem onAction="#openConfig" text="%main.more.open-config"/>
-                <MenuItem onAction="#openLogFolder" text="%main.more.open-log"/>
+                <MenuItem fx:id="configButton" onAction="#openConfig" text="%main.more.open-config"/>
+                <MenuItem fx:id="logButton" onAction="#openLogFolder" text="%main.more.open-log"/>
             </items>
         </MenuButton>
     </HBox>

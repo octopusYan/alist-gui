@@ -3,16 +3,14 @@ package cn.octopusyan.alistgui.controller;
 import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.viewModel.SetupViewModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
@@ -32,26 +30,24 @@ public class SetupController extends BaseController<SetupViewModel> implements I
 
     @FXML
     public VBox setupView;
-    @FXML
+    @I18n(key = "setup.auto-start.label")
     public CheckBox autoStartCheckBox;
-    @FXML
+    @I18n(key = "setup.silent-startup.label")
     public CheckBox silentStartupCheckBox;
-    @FXML
+    @I18n(key = "setup.close-to-tray.label")
     public CheckBox closeToTrayCheckBox;
-    @FXML
     public ComboBox<Locale> languageComboBox;
-    @FXML
     public ComboBox<Theme> themeComboBox;
-    @FXML
     public ComboBox<ProxySetup> proxySetupComboBox;
-    @FXML
     public Pane proxySetupPane;
-    @FXML
+    @I18n(key = "setup.proxy.test")
     public Button proxyCheck;
-    @FXML
     public TextField proxyHost;
-    @FXML
     public TextField proxyPort;
+    @I18n(key = "setup.proxy.host")
+    public Label hostLabel;
+    @I18n(key = "setup.proxy.port")
+    public Label portLabel;
 
     @Override
     public VBox getRootPanel() {
@@ -103,7 +99,6 @@ public class SetupController extends BaseController<SetupViewModel> implements I
         viewModel.proxySetupProperty().bind(proxySetupComboBox.getSelectionModel().selectedItemProperty());
     }
 
-    @FXML
     public void proxyTest() {
         viewModel.proxyTest();
     }

@@ -24,14 +24,14 @@
             <padding>
                 <Insets left="20.0" right="20.0"/>
             </padding>
-            <Tab text="%root.tab.main">
+            <Tab fx:id="mainTab" text="%root.tab.main">
                 <graphic>
                     <FontIcon iconColor="white" iconLiteral="fa-th-large"/>
                 </graphic>
                 <!-- 引入主页 -->
                 <fx:include fx:id="mainController" source="main-view.fxml" prefWidth="Infinity" prefHeight="-Infinity"/>
             </Tab>
-            <Tab text="%root.tab.setup">
+            <Tab fx:id="setupTab" text="%root.tab.setup">
                 <graphic>
                     <FontIcon iconColor="white" iconLiteral="fa-cog"/>
                 </graphic>
@@ -39,7 +39,7 @@
                 <fx:include fx:id="setupController" source="setup-view.fxml" prefWidth="Infinity"
                             prefHeight="-Infinity"/>
             </Tab>
-            <Tab text="%root.tab.about">
+            <Tab fx:id="aboutTab" text="%root.tab.about">
                 <graphic>
                     <FontIcon iconColor="white" iconLiteral="fa-info-circle"/>
                 </graphic>

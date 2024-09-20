@@ -6,6 +6,7 @@ import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.util.WindowsUtil;
 import cn.octopusyan.alistgui.view.PopupMenu;
 import javafx.application.Platform;
+import javafx.beans.binding.StringBinding;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -148,14 +149,15 @@ public class SystemTrayManager {
         if (popupMenu != null) return;
 
         MenuItem start = PopupMenu.menuItem(
-                getString(STR."main.control.\{running ? "stop" : "start"}"),
+                getStringBinding(STR."main.control.\{running ? "stop" : "start"}"),
                 _ -> AListManager.openScheme()
         );
-        MenuItem browser = PopupMenu.menuItem(getString("main.more.browser"), _ -> AListManager.openScheme());
+        MenuItem browser = PopupMenu.menuItem(getStringBinding("main.more.browser"), _ -> AListManager.openScheme());
         browser.setDisable(!running);
 
         AListManager.runningProperty().addListener((_, _, newValue) -> {
-            start.setText(getString(STR."main.control.\{newValue ? "stop" : "start"}"));
+            start.textProperty().unbind();
+            start.textProperty().bind(getStringBinding(STR."main.control.\{newValue ? "stop" : "start"}"));
             browser.disableProperty().set(!newValue);
             toolTip(STR."AList \{newValue ? "running" : "stopped"}");
             icon(STR."/assets/logo\{newValue ? "" : "-disabled"}.png");
@@ -172,16 +174,16 @@ public class SystemTrayManager {
                         AListManager.start();
                     }
                 })
-                .addItem(getString("main.control.restart"), _ -> AListManager.restart())
-                .addMenu(getString("main.control.more"), browser,
-                        PopupMenu.menuItem(getString("main.more.open-config"), _ -> AListManager.openConfig()),
-                        PopupMenu.menuItem(getString("main.more.open-log"), _ -> AListManager.openLogFolder()))
+                .addItem(getStringBinding("main.control.restart"), _ -> AListManager.restart())
+                .addMenu(getStringBinding("main.control.more"), browser,
+                        PopupMenu.menuItem(getStringBinding("main.more.open-config"), _ -> AListManager.openConfig()),
+                        PopupMenu.menuItem(getStringBinding("main.more.open-log"), _ -> AListManager.openLogFolder()))
                 .addSeparator()
                 .addExitItem();
     }
 
-    private static String getString(String key) {
-        return Context.getLanguageBinding(key).get();
+    private static StringBinding getStringBinding(String key) {
+        return Context.getLanguageBinding(key);
     }
 
     private static Stage stage() {

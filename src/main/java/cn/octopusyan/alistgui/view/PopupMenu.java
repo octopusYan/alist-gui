@@ -4,6 +4,7 @@ import atlantafx.base.controls.CaptionMenuItem;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.util.WindowsUtil;
 import javafx.application.Platform;
+import javafx.beans.binding.StringBinding;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -47,6 +48,12 @@ public class PopupMenu {
         return addItem(new MenuItem(label), handler);
     }
 
+    public PopupMenu addItem(StringBinding bind, EventHandler<ActionEvent> handler) {
+        MenuItem menuItem = new MenuItem();
+        menuItem.textProperty().bind(bind);
+        return addItem(menuItem, handler);
+    }
+
     public PopupMenu addItem(MenuItem node, EventHandler<ActionEvent> handler) {
         node.setOnAction(handler);
         return addItem(node);
@@ -66,6 +73,12 @@ public class PopupMenu {
 
     public PopupMenu addMenu(String label, MenuItem... items) {
         return addMenu(new Menu(label), items);
+    }
+
+    public PopupMenu addMenu(StringBinding label, MenuItem... items) {
+        Menu menu = new Menu();
+        menu.textProperty().bind(label);
+        return addMenu(menu, items);
     }
 
     public PopupMenu addMenu(Menu menu, MenuItem... items) {
@@ -111,6 +124,13 @@ public class PopupMenu {
 
     public static MenuItem menuItem(String label, EventHandler<ActionEvent> handler) {
         MenuItem menuItem = new MenuItem(label);
+        menuItem.setOnAction(handler);
+        return menuItem;
+    }
+
+    public static MenuItem menuItem(StringBinding stringBinding, EventHandler<ActionEvent> handler) {
+        MenuItem menuItem = new MenuItem();
+        menuItem.textProperty().bind(stringBinding);
         menuItem.setOnAction(handler);
         return menuItem;
     }

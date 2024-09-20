@@ -3,6 +3,7 @@ package cn.octopusyan.alistgui.controller;
 import atlantafx.base.controls.ModalPane;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.SystemTrayManager;
 import cn.octopusyan.alistgui.util.WindowsUtil;
@@ -11,10 +12,10 @@ import com.gluonhq.emoji.EmojiData;
 import com.gluonhq.emoji.util.EmojiImageUtils;
 import javafx.application.Platform;
 import javafx.css.PseudoClass;
-import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -31,27 +32,28 @@ import java.util.Locale;
  */
 public class RootController extends BaseController<RootViewModel> {
     // 布局
-    @FXML
-    private StackPane rootPane;
-    @FXML
-    private HBox windowHeader;
-    @FXML
-    private FontIcon alwaysOnTopIcon;
-    @FXML
-    private FontIcon minimizeIcon;
-    @FXML
-    private FontIcon closeIcon;
+    public StackPane rootPane;
+    public HBox windowHeader;
+    public FontIcon alwaysOnTopIcon;
+    public FontIcon minimizeIcon;
+    public FontIcon closeIcon;
 
     // 界面
-    @FXML
-    private TabPane tabPane;
+    public TabPane tabPane;
+
+    @I18n(key = "root.tab.main")
+    public Tab mainTab;
+    @I18n(key = "root.tab.setup")
+    public Tab setupTab;
+    @I18n(key = "root.tab.about")
+    public Tab aboutTab;
 
     // footer
-    @FXML
+    @I18n(key = "root.foot.doc")
     public Button document;
-    @FXML
+    @I18n(key = "root.foot.github")
     public Button github;
-    @FXML
+    @I18n(key = "root.foot.sponsor")
     public Button sponsor;
 
     private final ModalPane modalPane = new ModalPane();
@@ -94,6 +96,7 @@ public class RootController extends BaseController<RootViewModel> {
             sponsor.setGraphic(juice);
         });
 
+        // 遮罩
         getRootPanel().getChildren().add(modalPane);
         modalPane.setId("modalPane");
         // reset side and transition to reuse a single modal pane between different examples
@@ -131,13 +134,11 @@ public class RootController extends BaseController<RootViewModel> {
         viewModel.currentViewIndexProperty().bind(tabPane.getSelectionModel().selectedIndexProperty());
     }
 
-    @FXML
     public void openDocument() {
         String locale = Context.getCurrentLocale().equals(Locale.ENGLISH) ? "" : "zh/";
         Context.openUrl(STR."https://alist.nn.ci/\{locale}");
     }
 
-    @FXML
     public void openGithub() {
         Context.openUrl("https://github.com/alist-org/alist");
     }

@@ -38,9 +38,9 @@
         <padding>
             <Insets left="30"/>
         </padding>
-        <Label text="%setup.proxy.host"/>
+        <Label fx:id="hostLabel" text="%setup.proxy.host"/>
         <TextField fx:id="proxyHost" promptText="127.0.0.1" GridPane.columnIndex="1"/>
-        <Label text="%setup.proxy.port" GridPane.rowIndex="1"/>
+        <Label fx:id="portLabel" text="%setup.proxy.port" GridPane.rowIndex="1"/>
         <TextField fx:id="proxyPort" promptText="8080" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     </GridPane>
 </VBox>

@@ -10,7 +10,6 @@ import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.util.FxmlUtil;
 import cn.octopusyan.alistgui.util.ProcessesUtil;
-import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -161,14 +160,6 @@ public class Context {
      * @return Scene
      */
     public static Scene initScene() {
-        // locale监听; 切换后，重新加载界面
-        currentLocaleProperty().addListener((_, _, locale) -> Platform.runLater(Context::loadScene));
-        // 加载
-        loadScene();
-        return scene;
-    }
-
-    private static void loadScene() {
         try {
             FXMLLoader loader = FxmlUtil.load("root-view");
             //底层面板
@@ -185,6 +176,7 @@ public class Context {
         } catch (Throwable e) {
             log.error("loadScene error", e);
         }
+        return scene;
     }
 
     public static int currentViewIndex() {
