@@ -2,10 +2,7 @@ package cn.octopusyan.alistgui.config;
 
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.base.BaseController;
-import cn.octopusyan.alistgui.controller.AboutController;
-import cn.octopusyan.alistgui.controller.MainController;
-import cn.octopusyan.alistgui.controller.RootController;
-import cn.octopusyan.alistgui.controller.SetupController;
+import cn.octopusyan.alistgui.controller.*;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.util.FxmlUtil;
@@ -76,6 +73,7 @@ public class Context {
                     case MainController main -> main;
                     case SetupController setup -> setup;
                     case AboutController about -> about;
+                    case PasswordController passwod -> passwod;
                     default -> throw new IllegalStateException(STR."Unexpected value: \{type}");
                 };
             } catch (Exception e) {
