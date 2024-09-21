@@ -6,6 +6,7 @@ import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.enums.ProxySetup;
 import cn.octopusyan.alistgui.manager.ConfigManager;
+import cn.octopusyan.alistgui.view.ProxySetupCell;
 import cn.octopusyan.alistgui.viewModel.SetupViewModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -60,6 +61,9 @@ public class SetupController extends BaseController<SetupViewModel> implements I
         themeComboBox.setItems(FXCollections.observableList(ConfigManager.THEME_LIST));
         proxySetupComboBox.setItems(FXCollections.observableList(List.of(ProxySetup.values())));
 
+        proxySetupComboBox.setCellFactory(_ -> new ProxySetupCell());
+        proxySetupComboBox.setButtonCell(new ProxySetupCell());
+
         themeComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(Theme object) {
@@ -78,6 +82,14 @@ public class SetupController extends BaseController<SetupViewModel> implements I
         proxySetupComboBox.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
             proxySetupPane.setVisible(ProxySetup.MANUAL.equals(newValue));
             proxyCheck.setVisible(!ProxySetup.NO_PROXY.equals(newValue));
+
+//            proxySetupComboBox.promptTextProperty().bind(
+////                    Bindings.createStringBinding(
+////                            () -> Context.getLanguageBinding(STR."proxy.setup.label.\{newValue.getName()}").get(),
+////                            Context.currentLocaleProperty()
+////                    )
+//                    Context.getLanguageBinding(STR."proxy.setup.label.\{newValue.getName()}")
+//            );
         });
 
         languageComboBox.getSelectionModel().select(ConfigManager.language());
