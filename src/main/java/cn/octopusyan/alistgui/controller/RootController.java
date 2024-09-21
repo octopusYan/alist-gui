@@ -143,6 +143,11 @@ public class RootController extends BaseController<RootViewModel> {
         Context.openUrl("https://github.com/alist-org/alist");
     }
 
+    public void showTab(int index) {
+        if (index < 0 || index > 2) return;
+        tabPane.getSelectionModel().select(index);
+    }
+
     public void showModal(Node node, boolean persistent) {
         modalPane.show(node);
         modalPane.setPersistent(persistent);

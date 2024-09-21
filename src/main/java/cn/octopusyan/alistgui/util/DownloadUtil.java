@@ -5,6 +5,8 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.octopusyan.alistgui.config.Constants;
+import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.controller.RootController;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.model.upgrade.AList;
 import cn.octopusyan.alistgui.model.upgrade.Gui;
@@ -43,6 +45,8 @@ public class DownloadUtil {
             @Override
             public void onRunning() {
                 // 不展示进度条
+                RootController root = (RootController) Context.getControllers().get(RootController.class.getSimpleName());
+                root.showTab(0);
             }
 
             @Override
