@@ -89,8 +89,8 @@ public abstract class TaskListener implements BaseTask.Listener {
     /**
      * 检查更新监听默认实现
      */
-    public static abstract class UpgradeUpgradeListener extends TaskListener implements CheckUpdateTask.UpgradeListener {
-        public UpgradeUpgradeListener(BaseTask task) {
+    public static abstract class UpgradeListener extends TaskListener implements CheckUpdateTask.UpgradeListener {
+        public UpgradeListener(BaseTask task) {
             super(task);
         }
 

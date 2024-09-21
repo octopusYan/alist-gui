@@ -1,7 +1,6 @@
 package cn.octopusyan.alistgui.task;
 
 import cn.octopusyan.alistgui.base.BaseTask;
-import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.manager.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,10 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DownloadTask extends BaseTask {
     private final String downloadUrl;
+    private final String savePath;
 
-    public DownloadTask(String downloadUrl) {
+    public DownloadTask(String downloadUrl, String savePath) {
         super(STR."Download \{downloadUrl}");
         this.downloadUrl = downloadUrl;
+        this.savePath = savePath;
     }
 
     public void onListen(DownloadListener listener) {
@@ -27,7 +28,7 @@ public class DownloadTask extends BaseTask {
     protected void task() throws Exception {
         HttpUtil.getInstance().download(
                 downloadUrl,
-                Constants.BIN_DIR_PATH,
+                savePath,
                 listener instanceof DownloadListener ? ((DownloadListener) listener)::onProgress : null
         );
     }

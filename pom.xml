@@ -258,7 +258,6 @@
                     <vmArgs>
                         <arg>--enable-preview</arg>
                         <arg>-Xmx100m</arg>
-<!--                        <arg>-Djava.awt.headless=false</arg>-->
                     </vmArgs>
                 </configuration>
                 <executions>
@@ -270,7 +269,25 @@
                         </goals>
                         <configuration>
                             <platform>windows</platform>
+                            <zipballName>${project.name}-windows</zipballName>
                             <createZipball>true</createZipball>
+                            <winConfig>
+                                <headerType>gui</headerType>
+                                <generateMsi>false</generateMsi>
+                            </winConfig>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bundling-for-windows-nojre</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <zipballName>${project.name}-windows-nojre</zipballName>
+                            <platform>windows</platform>
+                            <createZipball>true</createZipball>
+                            <bundleJre>false</bundleJre>
                             <winConfig>
                                 <headerType>gui</headerType>
                                 <generateMsi>false</generateMsi>

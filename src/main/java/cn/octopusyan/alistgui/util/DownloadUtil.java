@@ -7,6 +7,7 @@ import cn.hutool.core.util.ZipUtil;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.model.upgrade.AList;
+import cn.octopusyan.alistgui.model.upgrade.Gui;
 import cn.octopusyan.alistgui.model.upgrade.UpgradeApp;
 import cn.octopusyan.alistgui.task.DownloadTask;
 import cn.octopusyan.alistgui.task.listener.TaskListener;
@@ -24,7 +25,6 @@ import java.util.zip.ZipFile;
 @Slf4j
 public class DownloadUtil {
 
-
     /**
      * 下载文件
      *
@@ -32,7 +32,12 @@ public class DownloadUtil {
      * @param version 下载版本
      */
     public static DownloadTask startDownload(UpgradeApp app, String version, Runnable runnable) {
-        var task = new DownloadTask(app.getDownloadUrl(version));
+        var parentPath = switch (app) {
+            case AList _ -> Constants.BIN_DIR_PATH;
+            case Gui _ -> Constants.DATA_DIR_PATH;
+            default -> throw new IllegalStateException(STR."Unexpected value: \{app}");
+        };
+        var task = new DownloadTask(app.getDownloadUrl(version), parentPath);
         task.onListen(new TaskListener.DownloadListener(task) {
 
             @Override
@@ -62,6 +67,11 @@ public class DownloadUtil {
             if (FileUtil.isWindows()) {
                 // Win系统下
                 path = StrUtil.replace(path, "*", "_");
+            }
+
+            // 打包后文件都在alist-gui文件夹下，解压时去掉
+            if (app instanceof Gui) {
+                path = path.replaceFirst(Constants.APP_NAME, "");
             }
 
             final File outItemFile = FileUtil.file(parentPath, path);

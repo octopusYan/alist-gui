@@ -3,7 +3,6 @@ package cn.octopusyan.alistgui.controller;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.manager.ConfigManager;
-import cn.octopusyan.alistgui.view.alert.AlertUtil;
 import cn.octopusyan.alistgui.viewModel.AboutViewModule;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -60,8 +59,7 @@ public class AboutController extends BaseController<AboutViewModule> {
     }
 
     public void checkGuiUpdate() {
-        // TODO 检查 gui 版本
-        AlertUtil.info("待开发。。。").show();
+        viewModel.checkUpdate(ConfigManager.gui());
     }
 
 }
