@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @author octopus_yan
  */
-public class WindowsUtil {
+public class ViewUtil {
     // 获取系统缩放比
     public static final double scaleX = Screen.getPrimary().getOutputScaleX();
     public static final double scaleY = Screen.getPrimary().getOutputScaleY();

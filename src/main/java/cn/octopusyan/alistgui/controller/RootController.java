@@ -6,7 +6,7 @@ import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.SystemTrayManager;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import cn.octopusyan.alistgui.viewModel.RootViewModel;
 import com.gluonhq.emoji.EmojiData;
 import com.gluonhq.emoji.util.EmojiImageUtils;
@@ -129,7 +129,7 @@ public class RootController extends BaseController<RootViewModel> {
             getWindow().setAlwaysOnTop(newVal);
         });
 
-        WindowsUtil.bindDragged(windowHeader);
+        ViewUtil.bindDragged(windowHeader);
 
         viewModel.currentViewIndexProperty().bind(tabPane.getSelectionModel().selectedIndexProperty());
     }

@@ -3,7 +3,7 @@ package cn.octopusyan.alistgui.manager;
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import cn.octopusyan.alistgui.view.PopupMenu;
 import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
@@ -48,7 +48,7 @@ public class SystemTrayManager {
 
     public static void icon(String path) {
         if (trayIcon == null) return;
-        icon(WindowsUtil.class.getResource(path));
+        icon(ViewUtil.class.getResource(path));
     }
 
     public static void icon(URL url) {
@@ -100,7 +100,7 @@ public class SystemTrayManager {
         if (trayIcon != null) return;
 
         // 系统托盘图标
-        URL resource = WindowsUtil.class.getResource(STR."/assets/logo\{running ? "" : "-disabled"}.png");
+        URL resource = ViewUtil.class.getResource(STR."/assets/logo\{running ? "" : "-disabled"}.png");
         Image image = Toolkit.getDefaultToolkit().getImage(resource);
         trayIcon = new TrayIcon(image);
 
@@ -187,6 +187,6 @@ public class SystemTrayManager {
     }
 
     private static Stage stage() {
-        return WindowsUtil.getStage();
+        return ViewUtil.getStage();
     }
 }

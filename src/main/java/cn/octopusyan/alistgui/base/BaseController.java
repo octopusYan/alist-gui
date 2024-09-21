@@ -4,7 +4,7 @@ import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Context;
 import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.util.FxmlUtil;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Labeled;
@@ -83,7 +83,7 @@ public abstract class BaseController<VM extends BaseViewModel> implements Initia
         // 全局窗口拖拽
         if (dragWindow() && getRootPanel() != null) {
             // 窗口拖拽
-            WindowsUtil.bindDragged(getRootPanel());
+            ViewUtil.bindDragged(getRootPanel());
         }
 
         // 国际化绑定

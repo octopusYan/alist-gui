@@ -2,7 +2,7 @@ package cn.octopusyan.alistgui.view;
 
 import atlantafx.base.controls.CaptionMenuItem;
 import cn.octopusyan.alistgui.config.Constants;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.event.ActionEvent;
@@ -115,8 +115,8 @@ public class PopupMenu {
             root.hide();
 
         root.show(utilityStage,
-                event.getX() / WindowsUtil.scaleX,
-                event.getY() / WindowsUtil.scaleY
+                event.getX() / ViewUtil.scaleX,
+                event.getY() / ViewUtil.scaleY
         );
         // 获取焦点 (失去焦点隐藏自身)
         root.requestFocus();
