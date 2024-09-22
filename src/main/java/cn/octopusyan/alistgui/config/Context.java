@@ -1,17 +1,12 @@
 package cn.octopusyan.alistgui.config;
 
-import atlantafx.base.theme.Theme;
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.base.BaseController;
-import cn.octopusyan.alistgui.controller.AboutController;
-import cn.octopusyan.alistgui.controller.MainController;
-import cn.octopusyan.alistgui.controller.RootController;
-import cn.octopusyan.alistgui.controller.SetupController;
+import cn.octopusyan.alistgui.controller.*;
 import cn.octopusyan.alistgui.manager.ConfigManager;
 import cn.octopusyan.alistgui.manager.ConsoleLog;
 import cn.octopusyan.alistgui.util.FxmlUtil;
 import cn.octopusyan.alistgui.util.ProcessesUtil;
-import javafx.application.Platform;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -41,7 +36,6 @@ public class Context {
     private static final Logger log = LoggerFactory.getLogger(Context.class);
     private static Scene scene;
     private static final IntegerProperty currentViewIndex = new SimpleIntegerProperty(0);
-    private static final ObjectProperty<Theme> theme = new SimpleObjectProperty<>(ConfigManager.theme());
 
     /**
      * 控制器集合
@@ -79,6 +73,7 @@ public class Context {
                     case MainController main -> main;
                     case SetupController setup -> setup;
                     case AboutController about -> about;
+                    case PasswordController passwod -> passwod;
                     default -> throw new IllegalStateException(STR."Unexpected value: \{type}");
                 };
             } catch (Exception e) {
@@ -90,10 +85,6 @@ public class Context {
 
     public static void setApplication(Application application) {
         Context.application = application;
-    }
-
-    public static ObjectProperty<Theme> themeProperty() {
-        return theme;
     }
 
     // 获取当前所选时区属性
@@ -151,12 +142,6 @@ public class Context {
     }
 
     /**
-     * 初始化 语言
-     */
-    private static void initI18n() {
-    }
-
-    /**
      * 有此类所在路径决定相对路径
      *
      * @param path 资源文件相对路径
@@ -173,17 +158,8 @@ public class Context {
      * @return Scene
      */
     public static Scene initScene() {
-        // locale监听; 切换后，重新加载界面
-        currentLocaleProperty().addListener((_, _, locale) -> Platform.runLater(Context::loadScene));
-        // 加载
-        loadScene();
-        return scene;
-    }
-
-    private static void loadScene() {
         try {
             FXMLLoader loader = FxmlUtil.load("root-view");
-            loader.setControllerFactory(Context.getControlFactory());
             //底层面板
             Pane root = loader.load();
             Optional.ofNullable(scene).ifPresentOrElse(
@@ -198,6 +174,7 @@ public class Context {
         } catch (Throwable e) {
             log.error("loadScene error", e);
         }
+        return scene;
     }
 
     public static int currentViewIndex() {

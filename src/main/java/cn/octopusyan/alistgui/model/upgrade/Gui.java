@@ -10,18 +10,12 @@ import lombok.Data;
 @Data
 public class Gui implements UpgradeApp {
     @JsonIgnore
-    private final String owner = "alist-org";
+    private final String owner = "octopusYan";
+
     @JsonIgnore
-    private final String repo = "alist";
+    private final String repo = "alist-gui";
 
-    private String releaseFile = "alist-gui-{version}-windows.zip";
+    private String releaseFile = "alist-gui-windows-nojre.zip";
+
     private String version = PropertiesUtils.getInstance().getProperty("app.version");
-
-    public String getReleaseFile() {
-        return getReleaseFile(version);
-    }
-
-    public String getReleaseFile(String version) {
-        return releaseFile.replace("{version}", version);
-    }
 }

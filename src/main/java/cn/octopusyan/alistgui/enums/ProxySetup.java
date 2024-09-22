@@ -1,6 +1,7 @@
 package cn.octopusyan.alistgui.enums;
 
 import cn.octopusyan.alistgui.config.Context;
+import javafx.beans.binding.StringBinding;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,10 @@ public enum ProxySetup {
 
     @Override
     public String toString() {
-        return Context.getLanguageBinding("proxy.setup.label." + getName()).getValue();
+        return getBinding().get();
+    }
+
+    public StringBinding getBinding() {
+        return Context.getLanguageBinding(STR."proxy.setup.label.\{getName()}");
     }
 }

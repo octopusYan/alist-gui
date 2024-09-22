@@ -36,7 +36,6 @@ public class SetupViewModel extends BaseViewModel {
 
 
     public SetupViewModel() {
-        theme.bindBidirectional(Context.themeProperty());
         theme.addListener((_, _, newValue) -> ConfigManager.theme(newValue));
         silentStartup.addListener((_, _, newValue) -> ConfigManager.silentStartup(newValue));
         autoStart.addListener((_, _, newValue) -> {

@@ -2,7 +2,7 @@ package cn.octopusyan.alistgui.view.alert.builder;
 
 import cn.octopusyan.alistgui.base.BaseBuilder;
 import cn.octopusyan.alistgui.config.Context;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -26,9 +26,9 @@ public class DefaultBuilder extends BaseBuilder<DefaultBuilder, Dialog<?>> {
 
         DialogPane dialogPane = dialog.getDialogPane();
         dialogPane.getScene().setFill(Color.TRANSPARENT);
-        WindowsUtil.bindDragged(dialogPane);
-        WindowsUtil.bindShadow(dialogPane);
-        WindowsUtil.getStage(dialogPane).initStyle(StageStyle.TRANSPARENT);
+        ViewUtil.bindDragged(dialogPane);
+        ViewUtil.bindShadow(dialogPane);
+        ViewUtil.getStage(dialogPane).initStyle(StageStyle.TRANSPARENT);
 
         dialogPane.getButtonTypes().add(new ButtonType(
                 Context.getLanguageBinding("label.cancel").get(),

@@ -22,11 +22,11 @@
     </StackPane>
 
     <HBox alignment="CENTER" styleClass="shield">
-        <Label styleClass="shield-name" text="%about.alist.version"/>
+        <Label fx:id="aListVersionLabel" styleClass="shield-name" text="%about.alist.version"/>
         <Label fx:id="aListVersion" styleClass="shield-version"/>
     </HBox>
     <HBox alignment="CENTER" styleClass="shield">
-        <Label styleClass="shield-name" text="%about.app.version"/>
+        <Label fx:id="appVersionLabel" styleClass="shield-name" text="%about.app.version"/>
         <Label styleClass="shield-version" text="v${project.version}"/>
     </HBox>
     <Button fx:id="checkAppVersion" onAction="#checkGuiUpdate" styleClass="flat" text="%about.app.update"/>

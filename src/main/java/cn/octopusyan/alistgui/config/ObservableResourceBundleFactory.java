@@ -1,5 +1,6 @@
 package cn.octopusyan.alistgui.config;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,15 +27,6 @@ public class ObservableResourceBundleFactory {
     }
 
     public StringBinding getStringBinding(String key) {
-        return new StringBinding() {
-            {
-                bind(resourceBundleProperty);
-            }
-
-            @Override
-            protected String computeValue() {
-                return getResourceBundle().getString(key);
-            }
-        };
+        return Bindings.createStringBinding(() -> getResourceBundle().getString(key), resourceBundleProperty);
     }
 }

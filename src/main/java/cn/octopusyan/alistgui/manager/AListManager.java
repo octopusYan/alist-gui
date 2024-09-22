@@ -205,7 +205,7 @@ public class AListManager {
         }
 
         var task = new CheckUpdateTask(ConfigManager.aList());
-        task.onListen(new TaskListener.UpgradeUpgradeListener(task) {
+        task.onListen(new TaskListener.UpgradeListener(task) {
             @Override
             public void onChecked(boolean hasUpgrade, String version) {
                 Platform.runLater(() -> showDownload(version));

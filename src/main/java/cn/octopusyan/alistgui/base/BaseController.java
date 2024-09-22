@@ -2,19 +2,28 @@ package cn.octopusyan.alistgui.base;
 
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.util.FxmlUtil;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -43,6 +52,29 @@ public abstract class BaseController<VM extends BaseViewModel> implements Initia
             }
         }
         viewModel = vm;
+
+    }
+
+    /**
+     * 国际化绑定
+     */
+    private void bindI18n() {
+        // i18n 绑定
+        try {
+            for (Field field : getAllField(this.getClass())) {
+                I18n i18n = field.getAnnotation(I18n.class);
+                if (i18n != null && StringUtils.isNoneEmpty(i18n.key())) {
+                    switch (field.get(this)) {
+                        case Labeled labeled -> labeled.textProperty().bind(Context.getLanguageBinding(i18n.key()));
+                        case Tab tab -> tab.textProperty().bind(Context.getLanguageBinding(i18n.key()));
+                        case MenuItem mi -> mi.textProperty().bind(Context.getLanguageBinding(i18n.key()));
+                        default -> {}
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            logger.error("获取属性失败", e);
+        }
     }
 
     @FXML
@@ -51,8 +83,11 @@ public abstract class BaseController<VM extends BaseViewModel> implements Initia
         // 全局窗口拖拽
         if (dragWindow() && getRootPanel() != null) {
             // 窗口拖拽
-            WindowsUtil.bindDragged(getRootPanel());
+            ViewUtil.bindDragged(getRootPanel());
         }
+
+        // 国际化绑定
+        bindI18n();
 
         // 初始化数据
         initData();
@@ -109,4 +144,16 @@ public abstract class BaseController<VM extends BaseViewModel> implements Initia
      * 视图事件
      */
     public abstract void initViewAction();
+
+
+    private static List<Field> getAllField(Class<?> class1) {
+        List<Field> list = new ArrayList<>();
+        while (class1 != Object.class) {
+            list.addAll(Arrays.stream(class1.getDeclaredFields()).toList());
+            //获取父类
+            class1 = class1.getSuperclass();
+        }
+        return list;
+    }
+
 }

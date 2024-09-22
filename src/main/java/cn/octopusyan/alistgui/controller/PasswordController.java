@@ -4,12 +4,14 @@ import atlantafx.base.controls.Popover;
 import cn.hutool.core.swing.clipboard.ClipboardUtil;
 import cn.octopusyan.alistgui.base.BaseController;
 import cn.octopusyan.alistgui.config.Context;
+import cn.octopusyan.alistgui.config.I18n;
 import cn.octopusyan.alistgui.manager.AListManager;
 import cn.octopusyan.alistgui.viewModel.AdminPanelViewModel;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -23,20 +25,20 @@ import org.apache.commons.lang3.StringUtils;
  * @author octopus_yan
  */
 public class PasswordController extends BaseController<AdminPanelViewModel> {
-    @FXML
-    private AnchorPane adminPanel;
+    public AnchorPane adminPanel;
 
-    @FXML
+    @I18n(key = "admin.pwd.toptip")
+    public Label toptip;
+    @I18n(key = "admin.pwd.user-field")
+    public Label usernameLabel;
     public TextField usernameField;
     @FXML
     public Button copyUsername;
-    @FXML
+    @I18n(key = "admin.pwd.pwd-field")
+    public Label passwordLabel;
     public PasswordField passwordField;
-    @FXML
     public Button refreshPassword;
-    @FXML
     public Button savePassword;
-    @FXML
     public Button copyPassword;
 
     private RootController root;

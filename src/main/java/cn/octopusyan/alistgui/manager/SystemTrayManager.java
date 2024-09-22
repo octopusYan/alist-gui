@@ -3,9 +3,10 @@ package cn.octopusyan.alistgui.manager;
 import cn.octopusyan.alistgui.Application;
 import cn.octopusyan.alistgui.config.Constants;
 import cn.octopusyan.alistgui.config.Context;
-import cn.octopusyan.alistgui.util.WindowsUtil;
+import cn.octopusyan.alistgui.util.ViewUtil;
 import cn.octopusyan.alistgui.view.PopupMenu;
 import javafx.application.Platform;
+import javafx.beans.binding.StringBinding;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class SystemTrayManager {
 
     public static void icon(String path) {
         if (trayIcon == null) return;
-        icon(WindowsUtil.class.getResource(path));
+        icon(ViewUtil.class.getResource(path));
     }
 
     public static void icon(URL url) {
@@ -76,7 +77,7 @@ public class SystemTrayManager {
             return;
         }
 
-        initTrayIcon();
+        initTrayIcon(AListManager.isRunning());
 
         try {
             if (!isShowing())
@@ -95,11 +96,12 @@ public class SystemTrayManager {
 
 //========================================={ private }===========================================
 
-    private static void initTrayIcon() {
+    private static void initTrayIcon(boolean running) {
         if (trayIcon != null) return;
 
         // 系统托盘图标
-        Image image = Toolkit.getDefaultToolkit().getImage(WindowsUtil.class.getResource("/assets/logo-disabled.png"));
+        URL resource = ViewUtil.class.getResource(STR."/assets/logo\{running ? "" : "-disabled"}.png");
+        Image image = Toolkit.getDefaultToolkit().getImage(resource);
         trayIcon = new TrayIcon(image);
 
         // 设置图标尺寸自动适应
@@ -129,7 +131,7 @@ public class SystemTrayManager {
                 if (event.isPopupTrigger()) {
                     // 弹出菜单
                     Platform.runLater(() -> {
-                        initPopupMenu();
+                        initPopupMenu(running);
                         popupMenu.show(event);
                     });
                 } else if (event.getButton() == MouseEvent.BUTTON1) {
@@ -143,15 +145,19 @@ public class SystemTrayManager {
     /**
      * 构建托盘菜单
      */
-    private static void initPopupMenu() {
+    private static void initPopupMenu(boolean running) {
         if (popupMenu != null) return;
 
-        MenuItem start = PopupMenu.menuItem(getString("main.control.start"), _ -> AListManager.openScheme());
-        MenuItem browser = PopupMenu.menuItem(getString("main.more.browser"), _ -> AListManager.openScheme());
-        browser.setDisable(true);
+        MenuItem start = PopupMenu.menuItem(
+                getStringBinding(STR."main.control.\{running ? "stop" : "start"}"),
+                _ -> AListManager.openScheme()
+        );
+        MenuItem browser = PopupMenu.menuItem(getStringBinding("main.more.browser"), _ -> AListManager.openScheme());
+        browser.setDisable(!running);
 
         AListManager.runningProperty().addListener((_, _, newValue) -> {
-            start.setText(getString(STR."main.control.\{newValue ? "stop" : "start"}"));
+            start.textProperty().unbind();
+            start.textProperty().bind(getStringBinding(STR."main.control.\{newValue ? "stop" : "start"}"));
             browser.disableProperty().set(!newValue);
             toolTip(STR."AList \{newValue ? "running" : "stopped"}");
             icon(STR."/assets/logo\{newValue ? "" : "-disabled"}.png");
@@ -168,19 +174,19 @@ public class SystemTrayManager {
                         AListManager.start();
                     }
                 })
-                .addItem(getString("main.control.restart"), _ -> AListManager.restart())
-                .addMenu(getString("main.control.more"), browser,
-                        PopupMenu.menuItem(getString("main.more.open-config"), _ -> AListManager.openConfig()),
-                        PopupMenu.menuItem(getString("main.more.open-log"), _ -> AListManager.openLogFolder()))
+                .addItem(getStringBinding("main.control.restart"), _ -> AListManager.restart())
+                .addMenu(getStringBinding("main.control.more"), browser,
+                        PopupMenu.menuItem(getStringBinding("main.more.open-config"), _ -> AListManager.openConfig()),
+                        PopupMenu.menuItem(getStringBinding("main.more.open-log"), _ -> AListManager.openLogFolder()))
                 .addSeparator()
                 .addExitItem();
     }
 
-    private static String getString(String key) {
-        return Context.getLanguageBinding(key).get();
+    private static StringBinding getStringBinding(String key) {
+        return Context.getLanguageBinding(key);
     }
 
     private static Stage stage() {
-        return WindowsUtil.getStage();
+        return ViewUtil.getStage();
     }
 }
