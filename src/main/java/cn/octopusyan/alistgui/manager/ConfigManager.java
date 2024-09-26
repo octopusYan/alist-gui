@@ -278,6 +278,10 @@ public class ConfigManager {
     }
 
     public static String guiVersion() {
+        // 覆盖配置文件读取的版本号
+        if (!Constants.APP_VERSION.equals(gui().getVersion())) {
+            guiVersion(Constants.APP_VERSION);
+        }
         return gui().getVersion();
     }
 
