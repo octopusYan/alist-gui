@@ -6,7 +6,7 @@
 
     <groupId>cn.octopusyan</groupId>
     <artifactId>alist-gui</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>alist-gui</name>
 
     <organization>
@@ -262,7 +262,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>bundling-for-windows</id>
+                        <id>windows</id>
                         <phase>package</phase>
                         <goals>
                             <goal>package</goal>
@@ -278,7 +278,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>bundling-for-windows-nojre</id>
+                        <id>windows-nojre</id>
                         <phase>package</phase>
                         <goals>
                             <goal>package</goal>
