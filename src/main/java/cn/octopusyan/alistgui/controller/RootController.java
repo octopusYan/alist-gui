@@ -114,12 +114,13 @@ public class RootController extends BaseController<RootViewModel> {
     @Override
     public void initViewAction() {
         closeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> {
+            Platform.setImplicitExit(!ConfigManager.closeToTray());
             if (ConfigManager.closeToTray()) {
                 SystemTrayManager.show();
             } else {
                 SystemTrayManager.hide();
+                Platform.exit();
             }
-            Platform.setImplicitExit(!ConfigManager.closeToTray());
             getWindow().close();
         });
         minimizeIcon.addEventHandler(MouseEvent.MOUSE_CLICKED, _ -> getWindow().setIconified(true));
