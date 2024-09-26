@@ -118,7 +118,7 @@ jobs:
       - name: Build with Maven
         run: |
           mvn clean package -f pom.xml
-          mkdir zipball && cp target/*-windows.zip zipball
+          mkdir zipball && cp target/*.zip zipball
 
       - name: Upload AListGUI to Github
         uses: actions/upload-artifact@v4
