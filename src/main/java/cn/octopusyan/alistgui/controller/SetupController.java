@@ -37,8 +37,14 @@ public class SetupController extends BaseController<SetupViewModel> implements I
     public CheckBox silentStartupCheckBox;
     @I18n(key = "setup.close-to-tray.label")
     public CheckBox closeToTrayCheckBox;
-    public ComboBox<Locale> languageComboBox;
+    @I18n(key = "setup.theme")
+    public Label themeLabel;
     public ComboBox<Theme> themeComboBox;
+    @I18n(key = "setup.language")
+    public Label languageLabel;
+    public ComboBox<Locale> languageComboBox;
+    @I18n(key = "setup.proxy")
+    public Label proxySetupLabel;
     public ComboBox<ProxySetup> proxySetupComboBox;
     public Pane proxySetupPane;
     @I18n(key = "setup.proxy.test")

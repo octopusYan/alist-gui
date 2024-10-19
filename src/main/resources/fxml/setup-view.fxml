@@ -14,15 +14,15 @@
     <CheckBox fx:id="silentStartupCheckBox" text="%setup.silent-startup.label"/>
     <CheckBox fx:id="closeToTrayCheckBox" text="%setup.close-to-tray.label"/>
     <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label text="%setup.theme"/>
+        <Label fx:id="themeLabel" text="%setup.theme"/>
         <ComboBox fx:id="themeComboBox"/>
     </HBox>
     <HBox alignment="CENTER_LEFT" spacing="10">
-        <Label text="%setup.language"/>
+        <Label fx:id="languageLabel" text="%setup.language"/>
         <ComboBox fx:id="languageComboBox"/>
     </HBox>
     <HBox alignment="CENTER_LEFT" spacing="20">
-        <Label styleClass="proxy-label" text="%setup.proxy"/>
+        <Label fx:id="proxySetupLabel" styleClass="proxy-label" text="%setup.proxy"/>
         <ComboBox fx:id="proxySetupComboBox"/>
         <Button fx:id="proxyCheck" onAction="#proxyTest" text="%setup.proxy.test"/>
     </HBox>
