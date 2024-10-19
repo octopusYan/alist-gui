@@ -84,10 +84,10 @@ public class ConfigManager {
         File parent = FileUtil.getParent(src, 1);
         if (!parent.exists()) {
             boolean wasSuccessful = parent.mkdirs();
-            objectMapper.writeValue(src, clazz.getDeclaredConstructor().newInstance());
             if (!wasSuccessful)
                 logger.error("{} 创建失败", src.getAbsolutePath());
         }
+        objectMapper.writeValue(src, clazz.getDeclaredConstructor().newInstance());
     }
 
     public static void save() {
