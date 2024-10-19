@@ -121,10 +121,12 @@ jobs:
           mkdir zipball && cp target/*.zip zipball
 
       - name: Upload AListGUI to Github
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
           name: AListGUI-windows
           path: zipball
+          retention-days: 5
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
