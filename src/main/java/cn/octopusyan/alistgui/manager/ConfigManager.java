@@ -84,10 +84,10 @@ public class ConfigManager {
         File parent = FileUtil.getParent(src, 1);
         if (!parent.exists()) {
             boolean wasSuccessful = parent.mkdirs();
-            objectMapper.writeValue(src, clazz.getDeclaredConstructor().newInstance());
             if (!wasSuccessful)
                 logger.error("{} 创建失败", src.getAbsolutePath());
         }
+        objectMapper.writeValue(src, clazz.getDeclaredConstructor().newInstance());
     }
 
     public static void save() {
@@ -278,6 +278,10 @@ public class ConfigManager {
     }
 
     public static String guiVersion() {
+        // 覆盖配置文件读取的版本号
+        if (!Constants.APP_VERSION.equals(gui().getVersion())) {
+            guiVersion(Constants.APP_VERSION);
+        }
         return gui().getVersion();
     }
 

@@ -6,7 +6,7 @@
 
     <groupId>cn.octopusyan</groupId>
     <artifactId>alist-gui</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>alist-gui</name>
 
     <organization>
@@ -238,6 +238,7 @@
                             <mainClass>cn.octopusyan.alistgui/${exec.mainClass}</mainClass>
                             <options>
                                 <option>--enable-preview</option>
+<!--                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005</option>-->
                             </options>
                         </configuration>
                     </execution>

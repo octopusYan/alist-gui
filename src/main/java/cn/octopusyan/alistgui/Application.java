@@ -18,11 +18,12 @@ import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ProxySelector;
+import java.io.*;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 
 public class Application extends javafx.application.Application {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
@@ -32,6 +33,10 @@ public class Application extends javafx.application.Application {
     @Override
     public void init() {
         logger.info("application init ...");
+
+        // 单例模式检查
+        makeSingle();
+
         // 初始化客户端配置
         ConfigManager.load();
 
@@ -83,6 +88,7 @@ public class Application extends javafx.application.Application {
         primaryStage.setTitle(String.format("%s v%s", Constants.APP_TITLE, Constants.APP_VERSION));
         Scene scene = Context.initScene();
         primaryStage.setScene(scene);
+
         primaryStage.show();
 
         // 静默启动
@@ -112,5 +118,85 @@ public class Application extends javafx.application.Application {
         // 关闭主界面
         Platform.exit();
         System.exit(0);
+    }
+
+    private static final int SINGLE_INSTANCE_LISTENER_PORT = 9009;
+    private static final String SINGLE_INSTANCE_FOCUS_MESSAGE = "focus";
+
+    private static final String instanceId = UUID.randomUUID().toString();
+
+    /**
+     * 我们在聚焦现有实例之前定义一个暂停
+     * 因为有时启动实例的命令行或窗口
+     * 可能会在第二个实例执行完成后重新获得焦点
+     * 所以我们在聚焦原始窗口之前引入了一个短暂的延迟
+     * 以便原始窗口可以保留焦点。
+     */
+    private static final int FOCUS_REQUEST_PAUSE_MILLIS = 500;
+
+    /**
+     * 单实例检测
+     *
+     * @see <a href='https://www.cnblogs.com/shihaiming/p/13553278.html'>JavaFX单实例运行应用程序</url>
+     */
+    public static void makeSingle() {
+        CountDownLatch instanceCheckLatch = new CountDownLatch(1);
+
+        Thread instanceListener = new Thread(() -> {
+            try (ServerSocket serverSocket = new ServerSocket(SINGLE_INSTANCE_LISTENER_PORT, 10)) {
+                instanceCheckLatch.countDown();
+
+                while (true) {
+                    try (
+                            Socket clientSocket = serverSocket.accept();
+                            BufferedReader in = new BufferedReader(
+                                    new InputStreamReader(clientSocket.getInputStream()))
+                    ) {
+                        String input = in.readLine();
+                        logger.info(STR."Received single instance listener message: \{input}");
+                        if (input.startsWith(SINGLE_INSTANCE_FOCUS_MESSAGE) && primaryStage != null) {
+                            //noinspection BusyWait
+                            Thread.sleep(FOCUS_REQUEST_PAUSE_MILLIS);
+                            Platform.runLater(() -> {
+                                logger.info(STR."To front \{instanceId}");
+                                primaryStage.setIconified(false);
+                                primaryStage.show();
+                                primaryStage.toFront();
+                            });
+                        }
+                    } catch (IOException e) {
+                        logger.error("Single instance listener unable to process focus message from client");
+                    }
+                }
+            } catch (java.net.BindException b) {
+                logger.error("SingleInstanceApp already running");
+
+                try (
+                        Socket clientSocket = new Socket(InetAddress.getLocalHost(), SINGLE_INSTANCE_LISTENER_PORT);
+                        PrintWriter out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream()))
+                ) {
+                    logger.info("Requesting existing app to focus");
+                    out.println(STR."\{SINGLE_INSTANCE_FOCUS_MESSAGE} requested by \{instanceId}");
+                } catch (IOException e) {
+                    logger.error("", e);
+                }
+
+                logger.info(STR."Aborting execution for instance \{instanceId}");
+                Platform.exit();
+            } catch (Exception e) {
+                logger.error("", e);
+            } finally {
+                instanceCheckLatch.countDown();
+            }
+        }, "instance-listener");
+        instanceListener.setDaemon(true);
+        instanceListener.start();
+
+        try {
+            instanceCheckLatch.await();
+        } catch (InterruptedException e) {
+            //noinspection ResultOfMethodCallIgnored
+            Thread.interrupted();
+        }
     }
 }
