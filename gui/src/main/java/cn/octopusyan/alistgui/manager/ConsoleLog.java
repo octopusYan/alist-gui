@@ -19,9 +19,10 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +34,7 @@ public class ConsoleLog {
     public static final String format = "yyyy/MM/dd hh:mm:ss";
     private volatile static ConsoleLog log;
     private final VBox textArea;
-    private final static String CONSOLE_COLOR_PREFIX = "^\033[";
+    private final static String CONSOLE_COLOR_PREFIX = "\033[";
     private final static String CONSOLE_MSG_REX = "^\033\\[(\\d+)m(.*)\033\\[0m(.*)$";
     private final static String URL_IP_REX = "^((ht|f)tps?:\\/\\/)?[\\w-+&@#/%?=~_|!:,.;]*[\\w-+&@#/%=~_|]+(:\\d{1,5})?\\/?$";
 
@@ -88,16 +89,6 @@ public class ConsoleLog {
         if (StringUtils.isEmpty(message) || !isInit()) return;
         message = message.strip();
         message = StrUtil.format(message, param);
-
-        // 多颜色消息处理
-        if (StringUtils.countMatches(message, CONSOLE_COLOR_PREFIX) > 1) {
-            String[] split = message.replace(CONSOLE_MSG_REX, "\n%s".formatted(CONSOLE_COLOR_PREFIX)).split("\n");
-            List<String> msgs = Arrays.stream(split).toList();
-            for (String msg : msgs) {
-                msg(msg);
-            }
-            return;
-        }
         message = setPwdText(message);
         message = resetConsoleColor(message);
 
@@ -187,17 +178,35 @@ public class ConsoleLog {
     /**
      * 控制台输出颜色
      *
-     * @param msg alist 输出消息
+     * @param msg 输出消息
      * @return bbcode 颜色文本
      */
     private static String resetConsoleColor(String msg) {
-        if (!msg.contains("\033[")) return msg;
+        if (!msg.contains(CONSOLE_COLOR_PREFIX) || !Pattern.matches(CONSOLE_MSG_REX, msg)) return msg;
 
-        String colorCode = ReUtil.get(CONSOLE_MSG_REX, msg, 1);
-        String color = StringUtils.lowerCase(Color.valueOf(Integer.parseInt(colorCode)).getColor());
-        String colorMsg = ReUtil.get(CONSOLE_MSG_REX, msg, 2);
-        msg = ReUtil.get(CONSOLE_MSG_REX, msg, 3);
-        return color(color, colorMsg) + msg;
+        // 多颜色处理
+        String[] split = Pattern.compile("\\033\\[(\\d;)?(\\d+)m")
+                .matcher(msg)
+                .replaceAll(matchResult -> "\n" + matchResult.group())
+                .replaceFirst("\n", "")
+                .split("\n");
+
+        StringBuilder sb = new StringBuilder();
+        Pattern pattern = Pattern.compile("\\033\\[(\\d;)?(\\d+)m(.*)");
+        Matcher matcher;
+        for (int i = 0; i < split.length; i++) {
+            matcher = pattern.matcher(split[i]);
+            if(!matcher.matches()) continue;
+
+            if (i % 2 == 0) {
+                String color = StringUtils.lowerCase(Color.valueOf(Integer.parseInt(matcher.group(2))).getColor());
+                sb.append(color(color, matcher.group(3)));
+            } else {
+                sb.append(matcher.group(3));
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
