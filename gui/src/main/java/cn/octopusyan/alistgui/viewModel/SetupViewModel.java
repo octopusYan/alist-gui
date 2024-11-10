@@ -65,8 +65,14 @@ public class SetupViewModel extends BaseViewModel {
         proxySetup.addListener((_, _, newValue) -> ConfigManager.proxySetup(newValue));
         proxyTestUrl.addListener((_, _, newValue) -> ConfigManager.proxyTestUrl(newValue));
         proxyHost.addListener((_, _, newValue) -> ConfigManager.proxyHost(newValue));
-        proxyPort.addListener((_, _, newValue) -> ConfigManager.proxyPort(newValue));
-        language.addListener((_, _, newValue) -> Context.setLanguage(newValue));
+        proxyHost.addListener((_, _, newValue) -> {
+            ConfigManager.proxyHost(newValue);
+            setProxy();
+        });
+        proxyPort.addListener((_, _, newValue) -> {
+            ConfigManager.proxyPort(newValue);
+            setProxy();
+        });
     }
 
     public ObjectProperty<Theme> themeProperty() {
@@ -120,6 +126,14 @@ public class SetupViewModel extends BaseViewModel {
 
             HttpUtil.getInstance().proxy(ConfigManager.proxySetup(), ConfigManager.getProxyInfo());
             getProxyCheckTask(checkUrl).execute();
+        });
+    }
+
+    private void setProxy() {
+        ConfigManager.checkProxy((success, _) -> {
+            if (!success) return;
+
+            HttpUtil.getInstance().proxy(ConfigManager.proxySetup(), ConfigManager.getProxyInfo());
         });
     }
 
