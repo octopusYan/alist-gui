@@ -6,7 +6,7 @@
 
     <groupId>cn.octopusyan</groupId>
     <artifactId>alist-gui</artifactId>
-    <version>1.0.1</version>
+    <version>${gui.version}</version>
     <name>alist-gui</name>
     <packaging>pom</packaging>
 
@@ -30,7 +30,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <project.version>1.0.1</project.version>
+        <gui.version>1.0.3</gui.version>
 
         <junit.version>5.10.0</junit.version>
         <javafx.version>21.0.4</javafx.version>

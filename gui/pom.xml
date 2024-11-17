@@ -7,11 +7,11 @@
     <parent>
         <groupId>cn.octopusyan</groupId>
         <artifactId>alist-gui</artifactId>
-        <version>1.0.1</version>
+        <version>${gui.version}</version>
     </parent>
 
     <artifactId>gui</artifactId>
-    <version>${parent.version}</version>
+    <version>${gui.version}</version>
     <name>alist-gui</name>
 
     <properties>
@@ -20,6 +20,8 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <parent.version>${gui.version}</parent.version>
 
         <exec.mainClass>cn.octopusyan.alistgui.AppLauncher</exec.mainClass>
         <cssSrcPath>${project.basedir}/src/main/resources/css</cssSrcPath>
@@ -191,7 +193,7 @@
                             <mainClass>cn.octopusyan.alistgui/${exec.mainClass}</mainClass>
                             <options>
                                 <option>--enable-preview</option>
-                                <!--                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005</option>-->
+<!--                                <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005</option>-->
                             </options>
                         </configuration>
                     </execution>
