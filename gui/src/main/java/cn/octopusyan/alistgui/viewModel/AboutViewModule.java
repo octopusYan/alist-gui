@@ -17,6 +17,7 @@ import cn.octopusyan.alistgui.view.alert.AlertUtil;
 import cn.octopusyan.alistgui.view.alert.builder.AlertBuilder;
 import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -144,8 +145,13 @@ public class AboutViewModule extends BaseViewModel {
                             Platform.runLater(() -> {
                                 switch (app) {
                                     case AList _ -> {
-                                        // 下载完成后，解压并删除文件
-                                        DownloadUtil.unzip(app);
+                                        if(AListManager.isRunning()) {
+                                            AListManager.stop();
+                                            AListManager.runningProperty().addListener(updateListener);
+                                        } else {
+                                            // 下载完成后，解压并删除文件
+                                            DownloadUtil.unzip(app);
+                                        }
                                         // 设置应用版本
                                         aListVersion.setValue(aListNewVersion.getValue());
                                         AListManager.restart();
@@ -163,4 +169,12 @@ public class AboutViewModule extends BaseViewModel {
                         }).execute();
                 });
     }
+
+    static final ChangeListener<Boolean> updateListener = (_, _, run) -> {
+        if (!run) {
+            // 下载完成后，解压并删除文件
+            DownloadUtil.unzip(ConfigManager.aList());
+        }
+        AListManager.runningProperty().removeListener(AboutViewModule.updateListener);
+    };
 }

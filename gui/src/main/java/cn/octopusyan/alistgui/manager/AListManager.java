@@ -143,24 +143,21 @@ public class AListManager {
         ConsoleLog.info(getText("alist.status.stop"));
         if (!running.get()) {
             ConsoleLog.warning(getText("alist.status.stop.stopped"));
-            return;
         }
         util.destroy();
     }
 
-    static ChangeListener<Boolean> restartListener;
+    static ChangeListener<Boolean> restartListener = (_, _, run) -> {
+        if (run) return;
+        running.removeListener(AListManager.restartListener);
+        start();
+    };
 
     public static void restart() {
         if (!running.get()) {
             start();
         } else {
             stop();
-
-            restartListener = (_, _, run) -> {
-                if (run) return;
-                running.removeListener(restartListener);
-                start();
-            };
             running.addListener(restartListener);
         }
     }
@@ -194,7 +191,7 @@ public class AListManager {
 //============================={ private }====================================
 
     /**
-     * TODO 点击开始时检查 aList 执行文件
+     * 点击开始时检查 aList 执行文件
      */
     private static boolean checkAList() {
         if (new File(Constants.ALIST_FILE).exists()) return true;
@@ -216,6 +213,11 @@ public class AListManager {
         return false;
     }
 
+    /**
+     * 开始下载AList
+     *
+     * @param version 下载版本号
+     */
     private static void showDownload(String version) {
         String content = STR."""
                 \{getText("msg.alist.download.notfile")}

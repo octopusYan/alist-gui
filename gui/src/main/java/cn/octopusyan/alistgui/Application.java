@@ -41,7 +41,7 @@ public class Application extends javafx.application.Application {
         long delay = 0L;
         // 更新重启检查
         File upgradeFile = new File(Constants.DATA_DIR_PATH + File.separator + new Gui().getReleaseFile());
-        logger.error("{}{}{}", Constants.DATA_DIR_PATH, File.separator, new Gui().getReleaseFile());
+//        logger.error("{}{}{}", Constants.DATA_DIR_PATH, File.separator, new Gui().getReleaseFile());
         if (upgradeFile.exists()) {
             logger.error("upgradeFile.exists");
             FileUtil.del(upgradeFile);
@@ -165,7 +165,7 @@ public class Application extends javafx.application.Application {
                 instanceCheckLatch.countDown();
 
                 while (true) {
-                    logger.error(STR."====\{instanceId}====");
+                    logger.debug(STR."====\{instanceId}====");
                     try (
                             Socket clientSocket = serverSocket.accept();
                             BufferedReader in = new BufferedReader(
