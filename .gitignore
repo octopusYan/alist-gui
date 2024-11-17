@@ -8,6 +8,7 @@ target/
 !**/src/test/**/target/
 /bin/
 gui.yaml
+upgrade.exe
 
 ### IntelliJ IDEA ###
 .idea/

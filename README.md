@@ -20,7 +20,7 @@
 
 ### 截图
 
-<details>
+<details open>
    <summary> 主界面 </summary>
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/909ac6ad-0021-47d7-a75c-7fb6505e8c15">
@@ -28,7 +28,7 @@
    </picture>
 </details>
 
-<details>
+<details open>
    <summary> 管理员信息 </summary>
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/840dca69-e67d-4083-88f8-8e67c3e47141">
@@ -36,7 +36,7 @@
    </picture>
 </details>
 
-<details>
+<details open>
    <summary> 设置 </summary>
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/8fc8c489-b9cd-4e34-ad32-4899ccc275e9">
@@ -44,7 +44,7 @@
    </picture>
 </details>
 
-<details>
+<details open>
    <summary> 关于 </summary>
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/dbef2d66-4ca4-4e89-8292-dbdce3566f93">
