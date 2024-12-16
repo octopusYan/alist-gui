@@ -7,11 +7,11 @@
     <parent>
         <groupId>cn.octopusyan</groupId>
         <artifactId>alist-gui</artifactId>
-        <version>${gui.version}</version>
+        <version>1.0.3</version>
     </parent>
 
     <artifactId>gui</artifactId>
-    <version>${gui.version}</version>
+    <version>1.0.3</version>
     <name>alist-gui</name>
 
     <properties>
@@ -20,8 +20,6 @@
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <parent.version>${gui.version}</parent.version>
 
         <exec.mainClass>cn.octopusyan.alistgui.AppLauncher</exec.mainClass>
         <cssSrcPath>${project.basedir}/src/main/resources/css</cssSrcPath>
@@ -143,7 +141,7 @@
                 <groupId>us.hebi.sass</groupId>
                 <artifactId>sass-cli-maven-plugin</artifactId>
                 <configuration>
-                    <sassVersion>1.78.0</sassVersion>
+                    <sassVersion>1.81.0</sassVersion>
                     <args> <!-- Any argument that should be forwarded to the sass cli -->
                         <arg>${cssSrcPath}/root.scss:${cssTargetPath}/root.css</arg>
                         <arg>${cssSrcPath}/root-view.scss:${cssTargetPath}/root-view.css</arg>
@@ -263,7 +261,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
                 <configuration>
                     <nonFilteredFileExtensions>
                         <nonFilteredFileExtension>exe</nonFilteredFileExtension>
