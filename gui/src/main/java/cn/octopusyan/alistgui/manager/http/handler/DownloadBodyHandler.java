@@ -21,16 +21,16 @@ import java.util.function.Consumer;
  * @author octopus_yan
  */
 @Slf4j
-public class BodyHandler implements HttpResponse.BodyHandler<Path> {
+public class DownloadBodyHandler implements HttpResponse.BodyHandler<Path> {
     private final HttpResponse.BodyHandler<Path> handler;
     private BiConsumer<Long, Long> consumer;
 
-    private BodyHandler(HttpResponse.BodyHandler<Path> handler) {
+    private DownloadBodyHandler(HttpResponse.BodyHandler<Path> handler) {
         this.handler = handler;
     }
 
-    public static BodyHandler create(Path directory, OpenOption... openOptions) {
-        return new BodyHandler(HttpResponse.BodyHandlers.ofFileDownload(directory, openOptions));
+    public static DownloadBodyHandler create(Path directory, OpenOption... openOptions) {
+        return new DownloadBodyHandler(HttpResponse.BodyHandlers.ofFileDownload(directory, openOptions));
     }
 
     @Override

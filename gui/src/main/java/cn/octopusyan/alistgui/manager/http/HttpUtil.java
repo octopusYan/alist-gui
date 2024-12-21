@@ -1,7 +1,7 @@
 package cn.octopusyan.alistgui.manager.http;
 
 import cn.octopusyan.alistgui.enums.ProxySetup;
-import cn.octopusyan.alistgui.manager.http.handler.BodyHandler;
+import cn.octopusyan.alistgui.manager.http.handler.DownloadBodyHandler;
 import cn.octopusyan.alistgui.model.ProxyInfo;
 import cn.octopusyan.alistgui.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -126,7 +126,7 @@ public class HttpUtil {
         }
 
         // 下载处理器
-        var handler = BodyHandler.create(
+        var handler = DownloadBodyHandler.create(
                 Path.of(savePath),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE
         );
